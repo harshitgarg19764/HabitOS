@@ -279,6 +279,12 @@ Habit_OS/
 - [ ] Submit button: hover glow → loading spinner (scale transition) → success checkmark ✓
 - [ ] Error state: card shake animation + red error messages `fadeInDown`
 - [ ] Link to register: hover underline animation
+- [ ] **"Continue with Google" button**:
+  - Google branded button (white pill with Google logo + text)
+  - Hover: subtle lift + shadow
+  - Click: loading shimmer while OAuth redirects
+  - Divider: `--- or continue with ---` between social and form
+- [ ] Show "Invalid email domain" error if Google account email is rejected
 
 ### Register (`/register`)
 - [ ] Same split-screen layout
@@ -288,6 +294,15 @@ Habit_OS/
   - Progress bar between steps animates
 - [ ] **Password strength bar**: width animates 0→100% with color change (red→yellow→green)
 - [ ] Confetti burst on successful register
+- [ ] **"Sign up with Google" button** (same styling as login, above the form)
+  - If Google OAuth succeeds: skip password step entirely, jump to profile setup
+  - Show Google avatar + name pre-filled after OAuth
+
+### OAuth Callback Page (`/auth/callback`)
+- [ ] Full-screen centered loading spinner with brand logo
+- [ ] Animated status text: "Authenticating with Google..."
+- [ ] Success: redirect to `/dashboard` with welcome toast
+- [ ] Error: redirect to `/login` with error message toast
 
 ---
 
@@ -582,11 +597,55 @@ promptHash (MD5), response (string), expiresAt, createdAt
 
 ---
 
-## 🔵 PHASE 14 – Backend: Authentication & Security
+## 🔵 PHASE 14 – Backend: Authentication, Google OAuth & Security
 
-### 14.1 Auth Endpoints
+### 14.1 Google OAuth Setup
+
+#### Google Cloud Console Configuration
+- [ ] Create project in [Google Cloud Console](https://console.cloud.google.com)
+- [ ] Enable **Google OAuth 2.0 API** + **Google People API**
+- [ ] Create OAuth 2.0 credentials (Web Application type)
+- [ ] Add Authorized Redirect URIs:
+  - Dev: `http://localhost:5000/api/auth/google/callback`
+  - Prod: `https://yourdomain.com/api/auth/google/callback`
+- [ ] Add env vars: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
+
+#### Passport.js Google Strategy (`services/googleAuth.service.ts`)
+- [ ] Install: `passport`, `passport-google-oauth20`, `@types/passport-google-oauth20`
+- [ ] Initialize `passport.use(new GoogleStrategy({ clientID, clientSecret, callbackURL }, verify))`
+- [ ] **Verify callback logic**:
+  1. Extract `profile.emails[0].value` (verified email from Google)
+  2. **Email domain validation** – check if domain is in allowed list (or all domains if open)
+  3. If user exists with this email → link Google account (`googleId`) to existing user
+  4. If new user → create `User` doc with `googleId`, name from `profile.displayName`, avatar from `profile.photos[0].value`, `isVerified: true` (Google already verified)
+  5. Create `EmailSettings` doc for new OAuth users
+  6. Send welcome email for brand-new users
+
+#### Email Domain Validation (Optional Allowlist)
+- [ ] `ALLOWED_EMAIL_DOMAINS` env var (comma-separated, e.g., `gmail.com,company.com`, or `*` for all)
+- [ ] If domain not in allowlist → reject with friendly error message
+- [ ] Reject disposable email domains (optional: use `disposable-email-domains` npm package)
+
+#### Google OAuth Routes
+- [ ] `GET /api/auth/google` – initiates OAuth flow
+  - Passport redirect to Google with scopes: `profile`, `email`
+  - Set `prompt=select_account` so user can choose Google account
+- [ ] `GET /api/auth/google/callback` – handles Google redirect back
+  - On success: generate JWT pair → redirect to `CLIENT_URL/auth/callback?token=<accessToken>`
+  - On failure: redirect to `CLIENT_URL/login?error=oauth_failed`
+- [ ] `GET /api/auth/google/disconnect` – remove `googleId` from user (only if password exists as fallback)
+
+#### Updated User Schema (add OAuth fields)
+- [ ] Add `googleId` (string, optional, sparse unique index)
+- [ ] Add `authProvider` enum: `'local' | 'google' | 'both'`
+- [ ] `passwordHash` now optional (Google-only users have no password)
+- [ ] `isVerified: true` auto-set for all Google OAuth users
+- [ ] `avatar` auto-populated from Google profile photo
+
+### 14.2 Standard Auth Endpoints
 
 #### `POST /api/auth/register`
+- [ ] Block if email already registered via Google OAuth (return 409 with "Use Google Sign-In")
 - [ ] Validate: name (3-50 chars), email (valid format), password (8+ chars, 1 uppercase, 1 number)
 - [ ] Check email uniqueness (return 409 if taken)
 - [ ] Hash password (`bcrypt`, cost 12)
@@ -599,6 +658,7 @@ promptHash (MD5), response (string), expiresAt, createdAt
 #### `POST /api/auth/login`
 - [ ] Rate limit: 10 attempts / 15min per IP + per email address (separate counters)
 - [ ] Account lockout: after 10 failed → lock 15min, return 423 with unlock time
+- [ ] If user has `authProvider: 'google'` and no password → return 400 "Please use Google Sign-In"
 - [ ] Find user, run `comparePassword()`, return 401 on mismatch (generic message)
 - [ ] Generate + store new token pair
 - [ ] Return: `{ user, accessToken }` + set cookie
@@ -617,21 +677,22 @@ promptHash (MD5), response (string), expiresAt, createdAt
 #### `GET /api/auth/me`
 - [ ] Requires `authenticate` middleware
 - [ ] Return user object (omit `passwordHash`, tokens)
+- [ ] Include `authProvider` so frontend knows to hide "Change Password" for Google users
 
 #### `PUT /api/auth/profile`
 - [ ] Update: name, avatar URL, timezone, preferences
 - [ ] Validate each field individually
 
 #### `PUT /api/auth/change-password`
+- [ ] Block if `authProvider === 'google'` (no password to change)
 - [ ] Verify current password with `comparePassword()`
 - [ ] Validate new password strength
-- [ ] Hash + save new password
-- [ ] Invalidate ALL existing refresh tokens for user (delete by userId)
+- [ ] Hash + save new password, set `authProvider: 'both'`
+- [ ] Invalidate ALL existing refresh tokens for user
 
 #### `POST /api/auth/forgot-password`
-- [ ] Find user by email (return 200 even if not found – prevent enumeration)
-- [ ] Generate signed reset token (crypto.randomBytes), store hash + 1h expiry
-- [ ] Send password reset email
+- [ ] If email belongs to Google-only user → respond with "Please use Google Sign-In" (don't send reset email)
+- [ ] Otherwise: generate signed reset token, store hash + 1h expiry, send email
 
 #### `POST /api/auth/reset-password`
 - [ ] Verify token hash + expiry
@@ -639,19 +700,28 @@ promptHash (MD5), response (string), expiresAt, createdAt
 - [ ] Clear `passwordResetToken` + `passwordResetExpires`
 - [ ] Invalidate all refresh tokens
 
-### 14.2 Auth Middleware
+### 14.3 Auth Middleware
 - [ ] `authenticate` – verify access JWT, attach `req.user`, return 401 if invalid/expired
 - [ ] `optionalAuth` – attach user if token valid, silently skip if absent
 - [ ] `authorize(roles[])` – check `req.user.role`, return 403 if unauthorized
 - [ ] `rateLimiter(max, windowMs)` – configurable per-route rate limiter factory
 
-### 14.3 Security Hardening
+### 14.4 Security Hardening
 - [ ] Access token: **15 min** expiry (short-lived, refresh silently)
 - [ ] Refresh token: **30 days** expiry, httpOnly + secure + sameSite=strict cookie
 - [ ] Refresh token rotation: old invalidated on every use
 - [ ] HTTPS-only cookie in production (`secure: process.env.NODE_ENV === 'production'`)
 - [ ] Input sanitization applied globally before all routes
 - [ ] SQL/NoSQL injection prevention via `express-mongo-sanitize`
+- [ ] CSRF protection for OAuth state parameter (`state` param in Google redirect)
+- [ ] Google ID token verification via `google-auth-library` for any future mobile/web token flows
+
+### 14.5 Google OAuth Email Flow
+- [ ] Welcome email sent on first Google login (same template as email/password register)
+- [ ] Email confirmed as verified automatically (Google guarantees it)
+- [ ] Daily summary, streak reminders, and all automation emails work identically for OAuth users
+- [ ] `EmailSettings` auto-created with defaults on first Google sign-in
+- [ ] No "Email Verification" step required for Google users
 
 ---
 
