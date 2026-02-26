@@ -1,0 +1,915 @@
+# 🧠 HabitOS – Project Task Board
+> **Run your life like software.**
+> AI-powered habit tracking, analytics, and life intelligence platform.
+> 🎬 **Design Goal: Every element breathes. Every scroll tells a story.**
+
+---
+
+## 🗂️ Project Phases Overview
+
+| Phase | Name | Priority |
+|-------|------|----------|
+| **1** | **Project Setup + Animation System** | 🟢 Start Here |
+| **2** | **Landing Page** (full scroll experience) | 🟢 Frontend |
+| **3** | **Auth Pages** | 🟢 Frontend |
+| **4** | **Dashboard UI** | 🟢 Frontend |
+| **5** | **Habits Management UI** | 🟢 Frontend |
+| **6** | **Daily Logs UI** | 🟢 Frontend |
+| **7** | **Analytics & Reports UI** | 🟢 Frontend |
+| **8** | **Heatmap Calendar UI** | 🟢 Frontend |
+| **9** | **AI Insights UI** | 🟢 Frontend |
+| **10** | **Achievements & Gamification UI** | 🟢 Frontend |
+| **11** | **Settings UI** | 🟢 Frontend |
+| **12** | **Global Animation Pass & UI Polish** | 🟢 Frontend |
+| **13** | **Backend: Project Setup & DB** | 🔵 Backend |
+| **14** | **Backend: Authentication API** | 🔵 Backend |
+| **15** | **Backend: Habits & Logs API** | 🔵 Backend |
+| **16** | **Backend: Analytics API** | 🔵 Backend |
+| **17** | **Backend: AI Intelligence API** | 🔵 Backend |
+| **18** | **Backend: Email & Automation** | 🔵 Backend |
+| **19** | **Frontend ↔ Backend Integration** | 🟡 Integration |
+| **20** | **Testing & Deployment** | 🔴 Final |
+
+---
+
+## 🎬 Animation Philosophy
+
+> Every screen, every component, every interaction must feel **alive**. Animations are not decoration — they are the UX.
+
+### Core Animation Principles
+- **Enter animations** – Every page and component animates in (never pops)
+- **Scroll-reveal** – Elements appear as the user scrolls down (staggered)
+- **Parallax** – Background layers move at different speeds from foreground
+- **Micro-interactions** – Every clickable element responds with motion
+- **State transitions** – Loading → data, empty → filled, off → on all animate
+- **Exit animations** – Modals, toasts, and pages animate out smoothly
+- **Spring physics** – Use spring-based easing (not linear) for natural feel
+- **Reduced motion** – All animations respect `prefers-reduced-motion`
+
+### Animation Libraries & Tools
+| Tool | Use Case |
+|------|----------|
+| **Framer Motion** | Page transitions, component enter/exit, gesture animations |
+| **CSS @keyframes** | Looping animations (flame, pulse, float, glow) |
+| **Intersection Observer API** | Scroll-triggered reveals via custom `useScrollReveal` hook |
+| **CSS scroll-timeline** | Parallax and scroll-progress-linked animations |
+| **canvas-confetti** | Celebration effects (habit completion, badge unlock) |
+| **react-spring** | Physics-based toggle, drag, and bounce animations |
+| **GSAP (optional)** | Complex timeline animations if needed |
+
+---
+
+## ⚙️ Tech Stack
+
+### Frontend
+- **Framework:** Next.js 14+ (App Router)
+- **Styling:** Tailwind CSS + custom CSS animations
+- **Charts:** Recharts (animated draw-on-mount)
+- **Animations:** Framer Motion + CSS @keyframes + Intersection Observer + react-spring
+- **HTTP Client:** Axios (mocked with static data during frontend phase)
+- **Font:** Google Fonts – **Outfit** (headings) + **Inter** (body)
+
+### Backend (Later – Phase 13+)
+- **Runtime:** Node.js / Express.js
+- **Database:** MongoDB + Mongoose
+- **Auth:** JWT + bcrypt
+- **Scheduler:** node-cron
+- **Email:** Nodemailer / SendGrid
+- **AI:** OpenAI API (GPT-4o)
+
+---
+
+## 📁 Folder Structure
+
+```
+Habit_OS/
+├─ client/
+│   ├─ app/
+│   │   ├─ layout.tsx
+│   │   ├─ page.tsx                  # Landing
+│   │   ├─ (auth)/login/page.tsx
+│   │   ├─ (auth)/register/page.tsx
+│   │   ├─ dashboard/page.tsx
+│   │   ├─ habits/page.tsx
+│   │   ├─ logs/page.tsx
+│   │   ├─ analytics/page.tsx
+│   │   ├─ heatmap/page.tsx
+│   │   ├─ insights/page.tsx
+│   │   ├─ achievements/page.tsx
+│   │   └─ settings/page.tsx
+│   ├─ components/
+│   │   ├─ ui/                       # Button, Card, Modal, Input, Badge, Toast
+│   │   ├─ layout/                   # Navbar, Sidebar, Footer
+│   │   ├─ animations/               # ScrollReveal, ParallaxLayer, CountUp, TypeWriter
+│   │   ├─ dashboard/
+│   │   ├─ habits/
+│   │   ├─ logs/
+│   │   ├─ analytics/
+│   │   ├─ heatmap/
+│   │   ├─ insights/
+│   │   └─ settings/
+│   ├─ hooks/
+│   │   ├─ useScrollReveal.ts        # Intersection Observer scroll animation hook
+│   │   ├─ useParallax.ts            # Parallax offset calculation hook
+│   │   ├─ useCountUp.ts             # Animated number counter hook
+│   │   ├─ useTheme.ts
+│   │   └─ useMockData.ts
+│   ├─ lib/
+│   │   ├─ mockData.ts
+│   │   ├─ animations.ts             # Framer Motion variants library
+│   │   └─ utils.ts
+│   ├─ styles/
+│   │   ├─ globals.css               # CSS variables, dark/light theme
+│   │   ├─ animations.css            # @keyframes definitions
+│   │   └─ scrollbar.css
+│   └─ public/
+├─ server/                           # Backend (Phase 13+)
+├─ TASK.md
+└─ .env.example
+```
+
+---
+
+## ✅ PHASE 1 – Project Setup + Animation System
+
+### Next.js & Dependencies
+- [ ] Initialize: `npx create-next-app@latest client --typescript --tailwind --app`
+- [ ] Install: `framer-motion react-spring @react-spring/web canvas-confetti`
+- [ ] Install: `recharts lucide-react clsx tailwind-merge axios`
+- [ ] Install: `@radix-ui/react-dialog @radix-ui/react-tooltip` (accessible primitives)
+
+### Tailwind Config
+- [ ] Extend colors: `primary`, `accent`, `surface`, `glass` palette (HSL-based)
+- [ ] Extend animations: `float`, `pulse-glow`, `shimmer`, `flicker`
+- [ ] Add `backgroundImage` gradients: hero-gradient, card-gradient, aurora
+- [ ] Configure `darkMode: 'class'`
+
+### CSS Animation System (`animations.css`)
+- [ ] `@keyframes fadeInUp` – translate Y(20px)→0 + opacity 0→1
+- [ ] `@keyframes fadeInLeft / fadeInRight` – horizontal entry
+- [ ] `@keyframes slideInScale` – scale(0.95)→1 + opacity 0→1
+- [ ] `@keyframes float` – subtle Y oscillation (infinite loop, 3s)
+- [ ] `@keyframes glow` – box-shadow pulse (infinite loop)
+- [ ] `@keyframes flicker` – flame effect
+- [ ] `@keyframes shimmer` – skeleton loading gradient sweep
+- [ ] `@keyframes spin-slow` – 8s full rotation for decorative elements
+- [ ] `@keyframes aurora` – background color shift (landing hero)
+- [ ] `@keyframes countUp` – counter roll animation
+- [ ] `@keyframes morphBlob` – background blob shape morphing
+- [ ] `@keyframes typewriter` – cursor blink
+- [ ] `@keyframes progressFill` – width 0% → N%
+- [ ] `@keyframes ripple` – button click ripple effect
+
+### Framer Motion Variants Library (`lib/animations.ts`)
+- [ ] `fadeInUp` variant (delay configurable)
+- [ ] `staggerContainer` variant (staggerChildren: 0.1s)
+- [ ] `scaleIn` variant (scale 0→1 with spring)
+- [ ] `slideInLeft / slideInRight` variant
+- [ ] `pageTransition` variant (for AnimatePresence route changes)
+- [ ] `cardHover` variant (y: -4, shadow increase on hover)
+- [ ] `buttonTap` variant (scale 0.96 on tap)
+- [ ] `modalOverlay` variant (fade in backdrop)
+- [ ] `modalContent` variant (scale + fade in)
+- [ ] `toastSlide` variant (slide in from right, slide out)
+
+### Custom Hooks
+- [ ] `useScrollReveal(threshold?)` – returns `ref + isVisible`, triggers Framer entry animation
+- [ ] `useParallax(speed)` – returns Y offset tied to scroll position via `scroll-timeline`
+- [ ] `useCountUp(target, duration)` – animates a number from 0 to target when in view
+- [ ] `useTypewriter(text, speed)` – character-by-character string reveal
+- [ ] `useStickyHeader()` – tracks scroll Y to add blur/shadow to navbar after 50px
+
+### Theme System
+- [ ] CSS variables for all colors (dark + light mode)
+- [ ] Theme context provider + `useTheme` hook
+- [ ] Theme toggle button with animated sun/moon icon transition
+- [ ] Persist theme in `localStorage`
+- [ ] Smooth color transition on theme switch (300ms `transition: background-color, color`)
+
+### Mock Data
+- [ ] `mockHabits[]` – 8 sample habits with names, colors, icons, streaks
+- [ ] `mockLogs{}` – 90 days of log entries per habit
+- [ ] `mockAnalytics{}` – weekly/monthly aggregated stats
+- [ ] `mockInsights[]` – 5 AI insight messages
+- [ ] `mockAchievements[]` – 10 badges (mix of locked/unlocked)
+- [ ] `mockUser{}` – profile data
+
+---
+
+## ✅ PHASE 2 – Landing Page (`/`) – Full Scroll Experience
+
+> **Goal:** A cinematic, immersive scroll journey that converts visitors into users.
+
+### 🔴 Navbar
+- [ ] Fixed transparent navbar → frosted glass on scroll (transition: `backdrop-blur + bg-opacity`)
+- [ ] Logo + nav links + CTA button
+- [ ] Mobile: hamburger → full-screen animated menu (slide + stagger links)
+- [ ] Active link underline animation (sliding indicator)
+
+### 🟡 Hero Section
+- [ ] **Full-screen** viewport height section
+- [ ] **Aurora gradient background** – animated blob mesh (CSS `@keyframes morphBlob`)
+- [ ] Floating particle dots (CSS + JS, subtle, not distracting)
+- [ ] **Headline** – Word-by-word `fadeInUp` with stagger (Framer Motion)
+- [ ] **Subtitle** – Typewriter reveal after headline completes
+- [ ] **CTA Buttons** – Framer `scaleIn` with stagger delay; hover: lift + glow
+- [ ] **Dashboard Preview Mockup** – Floating app window image with:
+  - `float` CSS animation (gentle up-down)
+  - Soft drop shadow that pulses with glow
+  - Scroll-linked: gently scales up as user scrolls past hero
+- [ ] Scroll indicator arrow (bounce animation, fades out on scroll)
+
+### 🟡 Features Section
+- [ ] Section title: `fadeInUp` on scroll enter
+- [ ] **6 Feature Cards** in responsive grid:
+  - Each card: glassmorphism, icon + title + description
+  - Scroll-triggered: `staggerContainer` → cards enter `fadeInUp` one by one
+  - Hover: card lifts (`y: -8px`), border glow appears, icon scales up
+- [ ] Decorative background: large blurred gradient circle (slow rotation)
+
+### 🟡 Stats / Social Proof Section
+- [ ] Background: dark gradient with subtle dot grid pattern
+- [ ] **4 stat counters** (e.g., "50K+ users", "2M+ habits") in a row:
+  - Triggered on scroll enter: numbers animate from 0 → target (`useCountUp`)
+  - Each counter has a glowing accent underline that animates in after count
+- [ ] Staggered entry: left to right
+
+### 🟡 How It Works Section
+- [ ] **3 Steps** displayed as vertical timeline on mobile, horizontal on desktop
+- [ ] Animated connecting line that **draws itself** as user scrolls (SVG stroke-dashoffset)
+- [ ] Each step icon: `scaleIn` animation as line reaches it
+- [ ] Step cards: `slideInLeft` for odd, `slideInRight` for even (alternating)
+
+### 🟡 Heatmap Preview Section
+- [ ] Showcase the heatmap component as a live preview (using mock data)
+- [ ] Scroll-triggered: heatmap cells animate in row by row (staggered `fadeIn`)
+- [ ] Section fades in while slightly parallax-shifted from background text
+
+### 🟡 AI Insights Preview Section
+- [ ] 3 rotating insight cards on an angled plane (CSS `perspective + rotateX`)
+- [ ] Auto-cycling every 3s with smooth crossfade
+- [ ] Background: gradient mesh in purple/indigo tones
+
+### 🟡 Testimonials Section
+- [ ] Infinite auto-scroll marquee (horizontal, no buttons needed)
+- [ ] Cards: avatar circle + name + quote + rating stars
+- [ ] On hover: marquee pauses smoothly
+
+### 🟡 CTA / Final Section
+- [ ] Full-width section with animated gradient background
+- [ ] Big headline + subtext + button (all animate in on scroll)
+- [ ] Decorative orbiting rings animation in background
+
+### 🟡 Footer
+- [ ] Logo + links + socials
+- [ ] Fade-in on scroll
+- [ ] Links: hover underline slide-in animation
+
+---
+
+## ✅ PHASE 3 – Auth Pages
+
+### Login (`/login`)
+- [ ] **Split-screen layout**: Left panel = animated brand visual, Right = form
+- [ ] Left panel: aurora gradient background + floating HabitOS brand elements + motivational quote cycling
+- [ ] Form card: glassmorphism with subtle border glow
+- [ ] **Floating label inputs**: label transitions from inside → above on focus/fill
+- [ ] Input focus: border color transitions + soft glow
+- [ ] Password toggle: eye icon fade swaps
+- [ ] Submit button: hover glow → loading spinner (scale transition) → success checkmark ✓
+- [ ] Error state: card shake animation + red error messages `fadeInDown`
+- [ ] Link to register: hover underline animation
+
+### Register (`/register`)
+- [ ] Same split-screen layout
+- [ ] **Multi-step form** (2 steps) with animated step transition:
+  - Step 1: Name + Email
+  - Step 2: Password + Confirm + Terms
+  - Progress bar between steps animates
+- [ ] **Password strength bar**: width animates 0→100% with color change (red→yellow→green)
+- [ ] Confetti burst on successful register
+
+---
+
+## ✅ PHASE 4 – Dashboard UI (`/dashboard`)
+
+### Layout
+- [ ] **Sidebar** (fixed desktop, drawer mobile):
+  - Collapsed state: icon-only with tooltip (width animation)
+  - Expanded: icon + label (Framer `AnimatePresence` for label text)
+  - Active item: animated background pill that slides to match active route
+  - Hover: items scale slightly with color transition
+- [ ] **Top header**: frosted glass, notification bell with badge pulse animation
+- [ ] **Page enter**: staggered card grid entrance (all cards `fadeInUp` with 0.1s interval)
+
+### Widget Animations
+- [ ] **Greeting strip** – typewriter "Good morning, Harshit 👋"
+- [ ] **Daily Score Ring** – SVG circle stroke-dashoffset animates from 0 to score on mount
+- [ ] **Streak Flame** – animated `@keyframes flicker` on flame SVG icon; number `countUp`
+- [ ] **Quick Habit Toggles** – spring bounce on toggle; green glow appears when ON
+- [ ] **Quote Card** – fade in; refresh icon spins 360° on click → new quote fades in
+- [ ] **Mini Line Chart** – Recharts `isAnimationActive` draws line on mount
+- [ ] **Activity Feed** – items slide in from right with stagger (newest first)
+- [ ] **Mini Heatmap** – cells `fadeIn` left-to-right with stagger
+
+---
+
+## ✅ PHASE 5 – Habits Management UI (`/habits`)
+
+- [ ] **Page header**: `fadeInDown`; "New Habit" button pulses gently until first habit created
+- [ ] **Habit Grid**: cards `fadeInUp` staggered on load
+- [ ] **Habit Card**:
+  - Hover: `y: -6px`, border accent glow, progress bar brightens
+  - Color accent bar on left animates in (height 0→100%)
+  - Streak number: `countUp` on mount
+  - Complete toggle: spring bounce, green ripple effect
+- [ ] **Create Modal**:
+  - Backdrop: `fadeIn` blur overlay
+  - Card: `scaleIn` from center
+  - Icon picker grid: icons `fadeIn` with stagger
+  - Color picker: dots scale up on hover/select with ripple
+  - Exit: `scaleOut` + backdrop fades
+- [ ] **Archive slide-out**: card `slideOutLeft` + shrink to 0 height
+- [ ] **Delete**: card shake animation → confirmation → `fadeOut + scale(0.8)`
+- [ ] **Drag reorder**: `react-beautiful-dnd` or Framer drag with drag shadow
+
+---
+
+## ✅ PHASE 6 – Daily Logs UI (`/logs`)
+
+- [ ] **Date bar**: slide transition between days (prev slides left, next slides right)
+- [ ] **Log list**: items `fadeInUp` staggered on date change
+- [ ] **Boolean toggle**: custom animated switch (pill slides left/right, color morphs)
+- [ ] **Numeric stepper**: +/- buttons with press-down scale; value flips like a counter
+- [ ] **Note field**: expands smoothly with `max-height` transition
+- [ ] **Progress bar**: `progressFill` animates whenever count changes
+- [ ] **"All Done!" confetti** burst via `canvas-confetti` when all habits logged
+- [ ] **Auto-save toast**: slides in from bottom-right → "Saved ✓" → slides out after 2s
+
+---
+
+## ✅ PHASE 7 – Analytics & Reports UI (`/analytics`)
+
+- [ ] **Tab filter**: animated underline indicator slides between tabs
+- [ ] **Stat Cards Row**: `staggerContainer` → cards `fadeInUp`; numbers `countUp`
+- [ ] **Line Chart**: Recharts animated draw + custom dot pulse on hover
+- [ ] **Bar Chart**: bars grow from bottom on mount (Recharts animation)
+- [ ] **Donut Chart**: arc animates from 0° to full on mount
+- [ ] **Streak Timeline**: cells fade in left-to-right with stagger
+- [ ] **Habit selector dropdown**: animated open/close with `scaleY`
+- [ ] **CSV Export**: button click → spinner → success icon
+
+---
+
+## ✅ PHASE 8 – Heatmap Calendar UI (`/heatmap`)
+
+- [ ] **Grid cells load**: left-to-right, row-by-row `fadeIn` with `staggerChildren`
+  - 364 cells total, stagger delay: ~3ms per cell = ~1.1s total entrance
+- [ ] **Cell hover**: scale(1.3) + tooltip `fadeIn` + glow border
+- [ ] **Tooltip**: positioned above cell, appears with `scaleIn` from bottom
+- [ ] **Sidebar panel** (on cell click): slides in from right (`x: 100%` → `x: 0`)
+- [ ] **Habit filter change**: grid cells cross-fade to new color intensity
+- [ ] **Year switch**: entire grid slides out left, new year slides in from right
+- [ ] **Color theme switch**: all cells transition color with `transition: background-color 400ms`
+
+---
+
+## ✅ PHASE 9 – AI Insights UI (`/insights`)
+
+- [ ] **Page enter**: section title `fadeInUp` → cards stagger in
+- [ ] **Insight Cards**: `slideInLeft` with stagger; confidence bar animates `progressFill`
+- [ ] **Gauge Chart**: needle animates 0 → score on mount (SVG rotation)
+- [ ] **Skeleton shimmer**: while "loading" state active, cards show animated shimmer
+- [ ] **Quote refresh**: current quote `fadeOut` → new quote `fadeIn`
+- [ ] **Suggestion chips**: `scaleIn` with stagger; hover: slight lift + border glow
+- [ ] **Weekly narrative**: collapsed by default, expand with smooth `max-height` transition
+
+---
+
+## ✅ PHASE 10 – Achievements UI (`/achievements`)
+
+- [ ] **Badge grid**: `staggerContainer` → badges `scaleIn` from center
+- [ ] **Locked badges**: greyscale + `opacity: 0.4` + lock icon overlay
+- [ ] **Unlocked badges**: full color + glow animation on hover
+- [ ] **Unlock animation** (triggered on earn): badge glows → burst of particles → pop scale effect
+- [ ] **Progress bars**: `progressFill` animated on mount
+- [ ] **Leaderboard**: rows slide in from bottom with stagger; rank numbers count up
+
+---
+
+## ✅ PHASE 11 – Settings UI (`/settings`)
+
+- [ ] **Section nav**: animated active indicator slides vertically between sections
+- [ ] **Toggle switches**: spring-physics pill transition (left↔right, color morphs)
+- [ ] **Avatar upload**: hover overlay fades in with camera icon
+- [ ] **Color picker**: circles scale on hover/select + ripple on select
+- [ ] **Save button**: press-down scale → loading spinner → success checkmark
+
+---
+
+## ✅ PHASE 12 – Global Animation Pass & UI Polish
+
+### 🟣 Scroll Reveal System (All Pages)
+- [ ] Wrap all section blocks with `<ScrollReveal>` component
+- [ ] Config options: `direction` (up/left/right), `delay`, `threshold`
+- [ ] Stagger lists automatically when `stagger` prop passed
+- [ ] Ensure all analytics cards, insight cards, habit cards use scroll-reveal
+
+### 🟣 Route Transitions (All Pages)
+- [ ] Wrap `app/layout.tsx` children with `<AnimatePresence mode="wait">`
+- [ ] Each page exports `motion.div` with `pageTransition` variant
+- [ ] Transition: `opacity: 0, y: 10` → `opacity: 1, y: 0` (200ms) → `opacity: 0, y: -10`
+
+### 🟣 Parallax Layers (Landing + Dashboard)
+- [ ] Hero: background blobs move at 0.3× scroll speed, foreground content at 1×
+- [ ] Dashboard: background gradient shifts subtly on mouse move (`useMousePosition` hook)
+
+### 🟣 Toast Notification System
+- [ ] Global toast context (bottom-right stack)
+- [ ] Variants: success (green), error (red), info (blue), warning (yellow)
+- [ ] Enter: `slideInRight`; Exit: `slideOutRight + fadeOut`
+- [ ] Auto-dismiss: 3s with visible countdown progress bar
+
+### 🟣 Loading & Skeleton States
+- [ ] Global `<Skeleton>` component with shimmer animation
+- [ ] Skeleton variants: text line, card, chart, heatmap cell
+- [ ] Apply to all data-dependent components
+
+### 🟣 Performance & Accessibility
+- [ ] `will-change: transform` on frequently animated elements
+- [ ] `prefers-reduced-motion` media query → disable all motion, show instant transitions
+- [ ] Ensure animations don't block main thread (use GPU-composited properties only: `transform`, `opacity`)
+- [ ] Test on 60fps and 30fps devices
+
+### 🟣 Final Design Audit
+- [ ] Consistent border radius (`rounded-2xl` for cards, `rounded-full` for pills)
+- [ ] Shadow scale: `sm / md / lg / glow` — applied consistently
+- [ ] Spacing audit (8px base grid)
+- [ ] Font scale: Display / H1 / H2 / H3 / Body / Caption
+- [ ] All interactive elements have `:focus-visible` ring
+- [ ] Custom scrollbar: thin, accent-colored, both light + dark modes
+- [ ] Responsive: 375px / 768px / 1024px / 1280px / 1920px
+
+---
+
+## 🔵 PHASE 13 – Backend: Project Setup, Architecture & Database
+
+### 13.1 Server Initialization
+- [ ] Initialize Node.js + TypeScript project in `server/`
+- [ ] Install core: `express`, `mongoose`, `dotenv`, `cors`, `helmet`, `compression`, `morgan`
+- [ ] Install dev: `ts-node`, `nodemon`, `@types/express`, `typescript`, `jest`, `supertest`
+- [ ] Install validation: `zod`, `express-validator`, `xss-clean`, `express-mongo-sanitize`
+- [ ] Configure `tsconfig.json` (strict mode, paths, outDir: `dist/`)
+- [ ] `src/index.ts` – server listen + graceful shutdown on `SIGTERM`
+- [ ] `src/app.ts` – Express app factory (middleware + routes assembled here)
+
+### 13.2 Backend Folder Structure
+```
+server/src/
+├─ config/
+│   ├─ db.ts               # MongoDB connect with retry + exponential backoff
+│   ├─ env.ts              # Zod-validated env schema (crash if missing vars)
+│   └─ constants.ts        # JWT expiries, rate limits, score weights
+├─ models/                 # Mongoose schemas + TS interfaces
+├─ routes/                 # Express routers (one per resource)
+├─ controllers/            # Thin handlers → delegate to services
+├─ services/               # Business logic (habits, streak, score, ai, email)
+├─ middleware/             # auth, validate, errorHandler, rateLimiter, requestId
+├─ utils/
+│   ├─ ApiResponse.ts      # Standard success envelope
+│   ├─ ApiError.ts         # Structured error class
+│   ├─ asyncHandler.ts     # Eliminates try/catch boilerplate
+│   ├─ logger.ts           # Winston (console + file, levels)
+│   └─ paginate.ts         # Offset + cursor pagination helper
+├─ jobs/                   # node-cron scheduled jobs
+├─ emails/                 # Templates + sender service
+└─ types/                  # Shared TS types/interfaces
+```
+
+### 13.3 Middleware Stack (in order)
+- [ ] `requestId` – attach `x-request-id` UUID to each request (for tracing)
+- [ ] `helmet()` – secure HTTP headers (CSP, HSTS, X-Frame-Options)
+- [ ] `cors()` – whitelist `CLIENT_URL` (dev + prod)
+- [ ] `compression()` – gzip all responses
+- [ ] `express-mongo-sanitize()` – strip `$` and `.` from inputs (NoSQL injection)
+- [ ] `xss-clean()` – sanitize HTML/script from string fields
+- [ ] `morgan` – HTTP logger (colorized in dev, JSON in prod)
+- [ ] `express.json({ limit: '10kb' })` – body size cap
+- [ ] `rateLimiter` – global 200 req / 15min window per IP
+- [ ] Global `errorHandler` middleware (catches all `next(err)` calls)
+- [ ] `notFound` catch-all (404 with `ApiError`)
+
+### 13.4 Utility Classes & Helpers
+- [ ] `ApiResponse` class – `{ success: true, data, message, pagination? }`
+- [ ] `ApiError` class – `statusCode`, `message`, `errors[]`, `isOperational`, `stack`
+- [ ] `asyncHandler(fn)` – wraps async controller, forwards errors to `next(err)`
+- [ ] `logger` – Winston with daily rotate file transport; levels: error/warn/info/http/debug
+- [ ] `paginate(model, query, options)` – returns `{ data, total, page, totalPages, hasNext }`
+
+### 13.5 Environment Validation (Zod)
+- [ ] Required: `MONGO_URI`, `JWT_SECRET`, `JWT_REFRESH_SECRET`, `PORT`, `CLIENT_URL`
+- [ ] Required: `OPENAI_API_KEY`, `SENDGRID_API_KEY`, `EMAIL_FROM`
+- [ ] Optional: `REDIS_URL` (for future caching), `LOG_LEVEL`, `AI_ENABLED`
+- [ ] Server crashes on startup with descriptive message if any required var missing
+
+### 13.6 MongoDB Schemas & Indexes
+
+#### `User`
+```
+_id, name, email (unique), passwordHash, avatar?, timezone (default: 'UTC'),
+role ('user'|'admin'), isVerified, verificationToken?, passwordResetToken?,
+passwordResetExpires?, preferences: { theme, accentColor, weekStartDay },
+createdAt, updatedAt
+```
+- [ ] Pre-save hook: bcrypt hash password (cost: 12) if modified
+- [ ] Instance method: `comparePassword(plain) → boolean`
+- [ ] Index: `email` (unique)
+
+#### `Habit`
+```
+_id, userId (ref: User), name, description?, icon (emoji), color (hex),
+type ('boolean'|'numeric'), unit?, goal?, goalPeriod ('daily'|'weekly'|'monthly'),
+tags[], archived (bool, default: false), order (number),
+frequency ('daily'|'weekly'|'custom'), frequencyDays? (0-6[]),
+createdAt, updatedAt
+```
+- [ ] Index: `{ userId, archived }`, `{ userId, order }`
+- [ ] Validation: `name` max 100 chars, `color` valid hex regex
+
+#### `Log`
+```
+_id, userId (ref: User), habitId (ref: Habit),
+date (Date stored as UTC midnight), value (Mixed: bool|number),
+note (string, max 500 chars), createdAt, updatedAt
+```
+- [ ] Compound unique index: `{ userId, habitId, date }` (one log per habit per day)
+- [ ] Index: `{ userId, date }` (dashboard), `{ habitId, date }` (analytics)
+
+#### `Mood`
+```
+_id, userId, date, score (1-10), emoji, note (max 300 chars), createdAt
+```
+- [ ] Compound unique index: `{ userId, date }`
+
+#### `Achievement`
+```
+_id, userId, type (enum: badge key strings), earnedAt, metadata?
+```
+- [ ] Compound unique index: `{ userId, type }`
+
+#### `RefreshToken`
+```
+_id, userId, tokenHash (SHA-256), expiresAt, createdAt
+```
+- [ ] TTL index on `expiresAt` (MongoDB auto-deletes expired docs)
+
+#### `EmailSettings`
+```
+_id, userId (unique), enabled, dailySummaryEnabled, dailySummaryTime ('HH:MM'),
+weeklyReportEnabled, weeklyReportDay (0-6), streakReminderEnabled,
+motivationalQuoteEnabled, missedHabitAlertEnabled, timezone, lastEmailSentAt
+```
+
+#### `AiCache`
+```
+_id, userId, type ('insight'|'quote'|'suggestion'|'summary'|'predict'),
+promptHash (MD5), response (string), expiresAt, createdAt
+```
+- [ ] TTL index on `expiresAt` (24h auto-expiry)
+
+### 13.7 Database Seed Script
+- [ ] `npm run seed` – populates dev DB with 1 test user + 8 habits + 90 days of logs
+
+---
+
+## 🔵 PHASE 14 – Backend: Authentication & Security
+
+### 14.1 Auth Endpoints
+
+#### `POST /api/auth/register`
+- [ ] Validate: name (3-50 chars), email (valid format), password (8+ chars, 1 uppercase, 1 number)
+- [ ] Check email uniqueness (return 409 if taken)
+- [ ] Hash password (`bcrypt`, cost 12)
+- [ ] Create `User` + `EmailSettings` documents atomically
+- [ ] Generate access token (JWT, 15min) + refresh token (JWT, 30d)
+- [ ] Store hashed refresh token in `RefreshToken` collection
+- [ ] Send welcome email (async, non-blocking)
+- [ ] Return: `{ user, accessToken }` + set `refreshToken` httpOnly cookie
+
+#### `POST /api/auth/login`
+- [ ] Rate limit: 10 attempts / 15min per IP + per email address (separate counters)
+- [ ] Account lockout: after 10 failed → lock 15min, return 423 with unlock time
+- [ ] Find user, run `comparePassword()`, return 401 on mismatch (generic message)
+- [ ] Generate + store new token pair
+- [ ] Return: `{ user, accessToken }` + set cookie
+
+#### `POST /api/auth/refresh`
+- [ ] Read refresh token from httpOnly cookie
+- [ ] Hash it, find matching `RefreshToken` doc (check not expired)
+- [ ] Delete old token + generate new pair (token rotation)
+- [ ] Return new `accessToken` + set new cookie
+
+#### `POST /api/auth/logout`
+- [ ] Delete `RefreshToken` document from DB
+- [ ] Clear `refreshToken` cookie
+- [ ] Return 200
+
+#### `GET /api/auth/me`
+- [ ] Requires `authenticate` middleware
+- [ ] Return user object (omit `passwordHash`, tokens)
+
+#### `PUT /api/auth/profile`
+- [ ] Update: name, avatar URL, timezone, preferences
+- [ ] Validate each field individually
+
+#### `PUT /api/auth/change-password`
+- [ ] Verify current password with `comparePassword()`
+- [ ] Validate new password strength
+- [ ] Hash + save new password
+- [ ] Invalidate ALL existing refresh tokens for user (delete by userId)
+
+#### `POST /api/auth/forgot-password`
+- [ ] Find user by email (return 200 even if not found – prevent enumeration)
+- [ ] Generate signed reset token (crypto.randomBytes), store hash + 1h expiry
+- [ ] Send password reset email
+
+#### `POST /api/auth/reset-password`
+- [ ] Verify token hash + expiry
+- [ ] Hash new password + save
+- [ ] Clear `passwordResetToken` + `passwordResetExpires`
+- [ ] Invalidate all refresh tokens
+
+### 14.2 Auth Middleware
+- [ ] `authenticate` – verify access JWT, attach `req.user`, return 401 if invalid/expired
+- [ ] `optionalAuth` – attach user if token valid, silently skip if absent
+- [ ] `authorize(roles[])` – check `req.user.role`, return 403 if unauthorized
+- [ ] `rateLimiter(max, windowMs)` – configurable per-route rate limiter factory
+
+### 14.3 Security Hardening
+- [ ] Access token: **15 min** expiry (short-lived, refresh silently)
+- [ ] Refresh token: **30 days** expiry, httpOnly + secure + sameSite=strict cookie
+- [ ] Refresh token rotation: old invalidated on every use
+- [ ] HTTPS-only cookie in production (`secure: process.env.NODE_ENV === 'production'`)
+- [ ] Input sanitization applied globally before all routes
+- [ ] SQL/NoSQL injection prevention via `express-mongo-sanitize`
+
+---
+
+## 🔵 PHASE 15 – Backend: Habits, Logs & Streaks API
+
+### 15.1 Habits Endpoints
+- [ ] `GET /api/habits` – all habits for user sorted by `order`; `?archived=true` includes archived
+- [ ] `GET /api/habits/:id` – single habit (verify `userId` ownership, 403 if mismatch)
+- [ ] `POST /api/habits` – create; validate all fields; auto-set `order = max + 1`
+- [ ] `PUT /api/habits/:id` – full replace (ownership check)
+- [ ] `PATCH /api/habits/:id` – partial update (any subset of fields)
+- [ ] `PATCH /api/habits/:id/archive` – toggle `archived`; return updated doc
+- [ ] `DELETE /api/habits/:id` – hard delete habit + cascade-delete all its logs (session transaction)
+- [ ] `PATCH /api/habits/reorder` – bulk update: accept `[{ id, order }]`, use `bulkWrite`
+
+### 15.2 Logs Endpoints
+- [ ] `GET /api/logs?date=YYYY-MM-DD` – all logs for one day; populate habit name + color
+- [ ] `GET /api/logs?start=&end=` – date range (max 365 days); map by `habitId` for fast lookup
+- [ ] `POST /api/logs` – upsert (same userId+habitId+date = update value); validate value type against habit type
+- [ ] `PUT /api/logs/:id` – update `value` or `note` (ownership check)
+- [ ] `DELETE /api/logs/:id` – remove log entry
+- [ ] `GET /api/logs/streak/:habitId` – return `{ current, longest, atRisk }`
+
+### 15.3 Streak Service (`services/streak.service.ts`)
+- [ ] `calculateCurrentStreak(userId, habitId)` – walk backwards from today counting consecutive logged days; frequency-aware (weekly habits skip unscheduled days)
+- [ ] `calculateLongestStreak(userId, habitId)` – scan all logs, track max consecutive run
+- [ ] `isStreakAtRisk(userId, habitId)` – today not logged AND current streak > 0
+- [ ] Batch streak calculator for dashboard: process all habits in parallel with `Promise.all`
+
+### 15.4 Achievement Trigger Service (`services/achievement.service.ts`)
+- [ ] Called asynchronously after every log creation
+- [ ] Achievement types:
+  | Badge | Trigger Condition |
+  |-------|------------------|
+  | `first-log` | Total logs === 1 |
+  | `7-day-streak` | Any habit streak === 7 |
+  | `30-day-streak` | Any habit streak === 30 |
+  | `100-day-streak` | Any habit streak === 100 |
+  | `perfect-week` | All habits logged every day this week |
+  | `perfect-month` | All habits logged every day this month |
+  | `10-habits` | User has 10+ active habits |
+  | `100-logs` | Total log count === 100 |
+  | `night-owl` | 5+ logs created after 10pm |
+  | `early-bird` | 5+ logs created before 7am |
+- [ ] Upsert `Achievement` doc (don't duplicate if already earned)
+- [ ] Return newly earned achievement(s) in API response for frontend notification
+
+### 15.5 Mood Endpoints
+- [ ] `GET /api/mood?date=YYYY-MM-DD` – mood for single date
+- [ ] `POST /api/mood` – upsert mood (score 1-10, emoji, note)
+- [ ] `GET /api/mood/range?start=&end=` – mood history array for chart
+
+---
+
+## 🔵 PHASE 16 – Backend: Analytics API
+
+### 16.1 Dashboard Stats Endpoint
+- [ ] `GET /api/analytics/dashboard` – single optimized call returning:
+  - Today: `habitsLogged`, `totalHabits`, `completionRate`, `dailyScore`
+  - Streaks: `{ habitId, name, current, longest }[]` for all habits
+  - Last 7 days: `[{ date, score }]` (mini chart data)
+  - All-time: `bestStreak`, `totalLogs`, `currentScore`
+
+### 16.2 Detailed Analytics
+- [ ] `GET /api/analytics/summary?range=7d|30d|90d&start=&end=`
+  - Returns: `avgDailyScore`, `bestDay`, `worstDay`, `totalLogs`, `completionRate`, `longestStreak`, `mostConsistentHabit`
+- [ ] `GET /api/analytics/habits/:id?range=` – single habit stats: completion %, avg value, streak history
+- [ ] `GET /api/analytics/daily?start=&end=` – `[{ date, score, habitsLogged, total }]` for line chart
+- [ ] `GET /api/analytics/weekly?weeks=12` – `[{ week, startDate, score, completions }]` for bar chart
+- [ ] `GET /api/analytics/heatmap?year=2026` – `[{ date, score, count }]` x 365 days
+- [ ] `GET /api/analytics/comparison?habitIds=a,b,c&range=30d` – side-by-side stats array
+- [ ] `GET /api/analytics/patterns` – best day of week per habit (aggregation by `$dayOfWeek`)
+
+### 16.3 Productivity Score Algorithm
+```
+base          = (habitsCompleted / totalHabits) * 60        // max 60 pts
+streakBonus   = Math.min(totalActiveStreakDays * 0.5, 20)   // max 20 pts
+consistency   = (7dayAvgCompletionRate * 15)                 // max 15 pts
+moodBonus     = moodScore ? (moodScore / 10) * 5 : 0        // max 5 pts
+score         = Math.round(base + streakBonus + consistency + moodBonus)
+```
+- [ ] Purely computed from logs + mood (no stored field, calculated on demand)
+- [ ] Memoized per-user per-day in `AiCache` with 6h TTL
+
+### 16.4 MongoDB Aggregation Pipelines
+- [ ] **Daily logs pipeline**: `$match date range → $group by date → $count completions`
+- [ ] **Weekly totals pipeline**: `$match → $addFields { week: $isoWeek } → $group by week → $sum`
+- [ ] **Completion rate pipeline**: `$group by habitId → $divide completions/totalDays`
+- [ ] **Best/worst day pipeline**: `$group by $dayOfWeek → $avg score → $sort`
+- [ ] **Heatmap pipeline**: `$match year → $group by date → $project score field`
+- [ ] **Streak history**: JavaScript service (aggregations don't easily handle consecutive-day logic)
+
+### 16.5 Export
+- [ ] `GET /api/analytics/export?format=csv` – stream CSV via `json2csv` (pipe to response)
+- [ ] `GET /api/analytics/export?format=json` – full data JSON dump
+- [ ] Rate limit: 5 exports / hour per user (store counter in memory / Redis)
+- [ ] Include all habits + all logs + analytics summary in export
+
+---
+
+## 🔵 PHASE 17 – Backend: AI Intelligence API
+
+### 17.1 OpenAI Service (`services/openai.service.ts`)
+- [ ] Initialize `openai` client with `OPENAI_API_KEY`
+- [ ] `callOpenAI({ model, systemPrompt, userPrompt, maxTokens, temperature })` base wrapper
+- [ ] Retry: 3 attempts with exponential backoff on 429 (rate limit) and 500+ errors
+- [ ] Token usage tracked per call (log `prompt_tokens + completion_tokens`)
+- [ ] Daily token budget guard: if user exceeds `AI_DAILY_TOKEN_LIMIT`, return fallback
+- [ ] Feature flag: if `AI_ENABLED=false`, all endpoints return pre-written fallback responses
+
+### 17.2 AI Cache Layer (`services/aiCache.service.ts`)
+- [ ] `getCached(userId, type, inputHash)` – look up `AiCache` where `expiresAt > now`
+- [ ] `setCache(userId, type, inputHash, response, ttlHours)` – store with expiry
+- [ ] `inputHash = md5(JSON.stringify(sortedInput))` – deterministic hash
+- [ ] Cache TTLs: insights (24h), quote (6h), suggestions (24h), summary (7d), predict (12h)
+
+### 17.3 AI Endpoints
+
+#### `GET /api/ai/insights`
+- [ ] Build prompt from last 90 days of log + habit data aggregated by day-of-week + time
+- [ ] Output: `[{ title, description, type ('positive'|'warning'|'tip'), confidence (0-1) }]` (5-8 items)
+- [ ] Example: "You complete Meditation 3× more likely on weekdays"
+- [ ] Cache: 24h per user
+
+#### `POST /api/ai/quote`
+- [ ] Input: `{ moodScore, productivityScore, streakCount }`
+- [ ] Prompt: "Generate a motivational quote for someone who has a mood of X/10 and productivity score of Y today"
+- [ ] Output: `{ quote, author, theme ('encouragement'|'challenge'|'celebration') }`
+- [ ] Fallback: curated local quotes JSON file (50 quotes)
+- [ ] Cache: 6h per user
+
+#### `GET /api/ai/suggestions`
+- [ ] Input: existing habit categories (derived from tags + names) + completion rates
+- [ ] Prompt: identify gaps in habit portfolio (sleep/nutrition/exercise/mindfulness/social/learning)
+- [ ] Output: `[{ habitName, reason, suggestedIcon, category, difficulty }]` (3 items)
+- [ ] Cache: 24h per user
+
+#### `GET /api/ai/summary`
+- [ ] Input: week's aggregated stats (score, top habit, streak, achievements)
+- [ ] Output: 2-3 sentence narrative paragraph about the week's performance
+- [ ] Cache: 7 days (keyed to ISO week number)
+
+#### `GET /api/ai/predict`
+- [ ] Input: last 90 days of logs grouped by day-of-week per habit
+- [ ] Output: `[{ habitId, name, predictions: { Mon: 0.8, Tue: 0.3, ... } }]` (probability 0-1)
+- [ ] Use statistical calculation (% of that weekday historically completed) — optionally enhance with GPT
+- [ ] Cache: 12h per user
+
+---
+
+## 🔵 PHASE 18 – Backend: Email Automation & Notifications
+
+### 18.1 Email Transport Setup
+- [ ] **Primary**: SendGrid (`@sendgrid/mail`) with API key
+- [ ] **Fallback**: Nodemailer + Gmail SMTP (dev/staging)
+- [ ] `sendEmail({ to, subject, html, text, attachments? })` base function
+- [ ] Retry failed sends: 3 retries with 5min spacing
+- [ ] Email send log: store `{ userId, type, sentAt, status }` in DB for audit
+- [ ] Unsubscribe token: signed JWT included in every email footer link
+
+### 18.2 HTML Email Templates
+- [ ] Base layout: header (logo + brand), body slot, footer (unsubscribe link, address)
+- [ ] All templates: responsive (max 600px), inline CSS, dark-mode friendly
+- [ ] **Welcome Email** – onboarding checklist, "Create first habit" CTA button
+- [ ] **Daily Summary** – score (large colored number), completion bar, top streak habit, quote, CTA
+- [ ] **Weekly Report** – week score, best day, most consistent habit, achievements earned, "View Analytics" CTA
+- [ ] **Streak Reminder** – flame icon, streak count, unlogged habits list, urgency message, direct log CTA
+- [ ] **Achievement Unlocked** – badge image + name + description, "View Achievements" CTA
+- [ ] **Missed Habit Alert** – habits not logged in 2+ days, gentle nudge
+- [ ] **Password Reset** – reset button with time limit notice, security disclaimer
+- [ ] Template engine: `handlebars` or `mjml` for maintainable template syntax
+
+### 18.3 Email Settings API
+- [ ] `GET /api/settings/email` – fetch user's `EmailSettings` document
+- [ ] `PUT /api/settings/email` – update preferences (validate time format, day 0-6)
+- [ ] `POST /api/settings/email/test` – send a sample daily summary to user's address
+- [ ] `GET /api/settings/email/unsubscribe?token=` – one-click unsubscribe (verify JWT, set `enabled: false`)
+
+### 18.4 Cron Jobs (`jobs/`)
+- [ ] **`dailySummary.job.ts`** – `0 * * * *` (hourly tick)
+  - For each user: check if `dailySummaryTime` matches current UTC hour considering timezone
+  - Compute today's analytics → generate email → send → update `lastEmailSentAt`
+  - Skip if `dailySummaryEnabled: false` or `enabled: false`
+- [ ] **`weeklyReport.job.ts`** – `0 8 * * 0` (Sundays 8am UTC)
+  - Fetch users with `weeklyReportEnabled: true`
+  - Run weekly aggregation → send report email
+- [ ] **`streakReminder.job.ts`** – `0 18 * * *` (6pm UTC daily)
+  - Find users where any habit has `isStreakAtRisk: true`
+  - Respect user timezone (send at 6pm local)
+  - Send streak-at-risk email
+- [ ] **`missedHabitAlert.job.ts`** – `0 20 * * *` (8pm UTC daily)
+  - Find habits not logged in 2+ consecutive days for each user
+  - Send gentle reminder (max once per habit per 3 days)
+- [ ] **`achievementCheck.job.ts`** – `*/30 * * * *` (every 30 min)
+  - Run achievement checks for users who logged in last 30min
+- [ ] **`aiCacheCleanup.job.ts`** – `0 3 * * *` (3am daily)
+  - Delete expired `AiCache` docs (backup for TTL index)
+- [ ] **Graceful shutdown**: all jobs stopped cleanly on `SIGTERM` before process exits
+
+---
+
+## 🟡 PHASE 19 – Frontend ↔ Backend Integration
+
+- [ ] Replace all `mockData` with Axios API calls
+- [ ] JWT auth flow (httpOnly cookie)
+- [ ] Protected routes (Next.js middleware)
+- [ ] Real loading states replace skeleton mocks
+- [ ] Optimistic UI updates for habit toggles
+
+---
+
+## 🔴 PHASE 20 – Testing & Deployment
+
+- [ ] Unit tests: API (Jest + Supertest)
+- [ ] Component tests (React Testing Library)
+- [ ] E2E: Playwright (auth, dashboard, log flow)
+- [ ] Frontend → **Vercel**
+- [ ] Backend → **Railway / Render**
+- [ ] DB → **MongoDB Atlas**
+- [ ] Email → **SendGrid**
+- [ ] CI/CD: GitHub Actions
+- [ ] Custom domain + SSL
+
+---
+
+## 📱 Page Map
+
+| Route | Page | Phase |
+|-------|------|-------|
+| `/` | Landing | 2 |
+| `/login` | Login | 3 |
+| `/register` | Register | 3 |
+| `/dashboard` | Dashboard | 4 |
+| `/habits` | Habits | 5 |
+| `/logs` | Daily Logs | 6 |
+| `/analytics` | Analytics | 7 |
+| `/heatmap` | Heatmap | 8 |
+| `/insights` | AI Insights | 9 |
+| `/achievements` | Achievements | 10 |
+| `/settings` | Settings | 11 |
+
+---
+
+## 📅 Development Timeline
+
+| Week | Focus |
+|------|-------|
+| Week 1 | Phase 1 – Setup + Full Animation System |
+| Week 2 | Phase 2 – Landing Page (scroll journey) |
+| Week 3 | Phase 3–4 – Auth + Dashboard |
+| Week 4 | Phase 5–6 – Habits + Logs |
+| Week 5 | Phase 7–8 – Analytics + Heatmap |
+| Week 6 | Phase 9–10 – Insights + Achievements |
+| Week 7 | Phase 11–12 – Settings + Global Polish |
+| Week 8 | Phase 13–15 – Backend Core |
+| Week 9 | Phase 16–18 – Backend AI + Email |
+| Week 10 | Phase 19–20 – Integration + Deploy |
+
+---
+
+*Last updated: 2026-02-26*
