@@ -30,7 +30,7 @@
 | **19** | **Frontend ↔ Backend Integration** | 🟡 Integration |
 | **20** | **Testing & Deployment** | 🔴 Final |
 
----
+---z
 
 ## 🎬 Animation Philosophy
 
