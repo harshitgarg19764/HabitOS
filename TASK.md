@@ -85,18 +85,18 @@
 Habit_OS/
 ├─ client/
 │   ├─ app/
-│   │   ├─ layout.tsx
-│   │   ├─ page.tsx                  # Landing
-│   │   ├─ (auth)/login/page.tsx
-│   │   ├─ (auth)/register/page.tsx
-│   │   ├─ dashboard/page.tsx
-│   │   ├─ habits/page.tsx
-│   │   ├─ logs/page.tsx
-│   │   ├─ analytics/page.tsx
-│   │   ├─ heatmap/page.tsx
-│   │   ├─ insights/page.tsx
-│   │   ├─ achievements/page.tsx
-│   │   └─ settings/page.tsx
+│   │   ├─ layout.jsx
+│   │   ├─ page.jsx                  # Landing
+│   │   ├─ (auth)/login/page.jsx
+│   │   ├─ (auth)/register/page.jsx
+│   │   ├─ dashboard/page.jsx
+│   │   ├─ habits/page.jsx
+│   │   ├─ logs/page.jsx
+│   │   ├─ analytics/page.jsx
+│   │   ├─ heatmap/page.jsx
+│   │   ├─ insights/page.jsx
+│   │   ├─ achievements/page.jsx
+│   │   └─ settings/page.jsx
 │   ├─ components/
 │   │   ├─ ui/                       # Button, Card, Modal, Input, Badge, Toast
 │   │   ├─ layout/                   # Navbar, Sidebar, Footer
@@ -109,15 +109,15 @@ Habit_OS/
 │   │   ├─ insights/
 │   │   └─ settings/
 │   ├─ hooks/
-│   │   ├─ useScrollReveal.ts        # Intersection Observer scroll animation hook
-│   │   ├─ useParallax.ts            # Parallax offset calculation hook
-│   │   ├─ useCountUp.ts             # Animated number counter hook
-│   │   ├─ useTheme.ts
-│   │   └─ useMockData.ts
+│   │   ├─ useScrollReveal.js        # Intersection Observer scroll animation hook
+│   │   ├─ useParallax.js            # Parallax offset calculation hook
+│   │   ├─ useCountUp.js             # Animated number counter hook
+│   │   ├─ useTheme.js
+│   │   └─ useMockData.js
 │   ├─ lib/
-│   │   ├─ mockData.ts
-│   │   ├─ animations.ts             # Framer Motion variants library
-│   │   └─ utils.ts
+│   │   ├─ mockData.js
+│   │   ├─ animations.js             # Framer Motion variants library
+│   │   └─ utils.js
 │   ├─ styles/
 │   │   ├─ globals.css               # CSS variables, dark/light theme
 │   │   ├─ animations.css            # @keyframes definitions
@@ -133,66 +133,66 @@ Habit_OS/
 ## ✅ PHASE 1 – Project Setup + Animation System
 
 ### Next.js & Dependencies
-- [ ] Initialize: `npx create-next-app@latest client --typescript --tailwind --app`
-- [ ] Install: `framer-motion react-spring @react-spring/web canvas-confetti`
-- [ ] Install: `recharts lucide-react clsx tailwind-merge axios`
-- [ ] Install: `@radix-ui/react-dialog @radix-ui/react-tooltip` (accessible primitives)
+- [x] Initialize: `npx create-next-app@latest client --js --tailwind --app`
+- [x] Install: `framer-motion react-spring @react-spring/web canvas-confetti`
+- [x] Install: `recharts lucide-react clsx tailwind-merge axios`
+- [x] Install: `@radix-ui/react-dialog @radix-ui/react-tooltip` (accessible primitives)
 
 ### Tailwind Config
-- [ ] Extend colors: `primary`, `accent`, `surface`, `glass` palette (HSL-based)
-- [ ] Extend animations: `float`, `pulse-glow`, `shimmer`, `flicker`
-- [ ] Add `backgroundImage` gradients: hero-gradient, card-gradient, aurora
-- [ ] Configure `darkMode: 'class'`
+- [x] Extend colors: `primary`, `accent`, `surface`, `glass` palette (HSL-based)
+- [x] Extend animations: `float`, `pulse-glow`, `shimmer`, `flicker`
+- [x] Add `backgroundImage` gradients: hero-gradient, card-gradient, aurora
+- [x] Configure `darkMode: 'class'`
 
 ### CSS Animation System (`animations.css`)
-- [ ] `@keyframes fadeInUp` – translate Y(20px)→0 + opacity 0→1
-- [ ] `@keyframes fadeInLeft / fadeInRight` – horizontal entry
-- [ ] `@keyframes slideInScale` – scale(0.95)→1 + opacity 0→1
-- [ ] `@keyframes float` – subtle Y oscillation (infinite loop, 3s)
-- [ ] `@keyframes glow` – box-shadow pulse (infinite loop)
-- [ ] `@keyframes flicker` – flame effect
-- [ ] `@keyframes shimmer` – skeleton loading gradient sweep
-- [ ] `@keyframes spin-slow` – 8s full rotation for decorative elements
-- [ ] `@keyframes aurora` – background color shift (landing hero)
-- [ ] `@keyframes countUp` – counter roll animation
-- [ ] `@keyframes morphBlob` – background blob shape morphing
-- [ ] `@keyframes typewriter` – cursor blink
-- [ ] `@keyframes progressFill` – width 0% → N%
-- [ ] `@keyframes ripple` – button click ripple effect
+- [x] `@keyframes fadeInUp` – translate Y(20px)→0 + opacity 0→1
+- [x] `@keyframes fadeInLeft / fadeInRight` – horizontal entry
+- [x] `@keyframes slideInScale` – scale(0.95)→1 + opacity 0→1
+- [x] `@keyframes float` – subtle Y oscillation (infinite loop, 3s)
+- [x] `@keyframes glow` – box-shadow pulse (infinite loop)
+- [x] `@keyframes flicker` – flame effect
+- [x] `@keyframes shimmer` – skeleton loading gradient sweep
+- [x] `@keyframes spin-slow` – 8s full rotation for decorative elements
+- [x] `@keyframes aurora` – background color shift (landing hero)
+- [x] `@keyframes countUp` – counter roll animation
+- [x] `@keyframes morphBlob` – background blob shape morphing
+- [x] `@keyframes typewriter` – cursor blink
+- [x] `@keyframes progressFill` – width 0% → N%
+- [x] `@keyframes ripple` – button click ripple effect
 
-### Framer Motion Variants Library (`lib/animations.ts`)
-- [ ] `fadeInUp` variant (delay configurable)
-- [ ] `staggerContainer` variant (staggerChildren: 0.1s)
-- [ ] `scaleIn` variant (scale 0→1 with spring)
-- [ ] `slideInLeft / slideInRight` variant
-- [ ] `pageTransition` variant (for AnimatePresence route changes)
-- [ ] `cardHover` variant (y: -4, shadow increase on hover)
-- [ ] `buttonTap` variant (scale 0.96 on tap)
-- [ ] `modalOverlay` variant (fade in backdrop)
-- [ ] `modalContent` variant (scale + fade in)
-- [ ] `toastSlide` variant (slide in from right, slide out)
+### Framer Motion Variants Library (`lib/animations.js`)
+- [x] `fadeInUp` variant (delay configurable)
+- [x] `staggerContainer` variant (staggerChildren: 0.1s)
+- [x] `scaleIn` variant (scale 0→1 with spring)
+- [x] `slideInLeft / slideInRight` variant
+- [x] `pageTransition` variant (for AnimatePresence route changes)
+- [x] `cardHover` variant (y: -4, shadow increase on hover)
+- [x] `buttonTap` variant (scale 0.96 on tap)
+- [x] `modalOverlay` variant (fade in backdrop)
+- [x] `modalContent` variant (scale + fade in)
+- [x] `toastSlide` variant (slide in from right, slide out)
 
 ### Custom Hooks
-- [ ] `useScrollReveal(threshold?)` – returns `ref + isVisible`, triggers Framer entry animation
-- [ ] `useParallax(speed)` – returns Y offset tied to scroll position via `scroll-timeline`
-- [ ] `useCountUp(target, duration)` – animates a number from 0 to target when in view
-- [ ] `useTypewriter(text, speed)` – character-by-character string reveal
-- [ ] `useStickyHeader()` – tracks scroll Y to add blur/shadow to navbar after 50px
+- [x] `useScrollReveal(threshold?)` – returns `ref + isVisible`, triggers Framer entry animation
+- [x] `useParallax(speed)` – returns Y offset tied to scroll position via `scroll-timeline`
+- [x] `useCountUp(target, duration)` – animates a number from 0 to target when in view
+- [x] `useTypewriter(text, speed)` – character-by-character string reveal
+- [x] `useStickyHeader()` – tracks scroll Y to add blur/shadow to navbar after 50px
 
 ### Theme System
-- [ ] CSS variables for all colors (dark + light mode)
-- [ ] Theme context provider + `useTheme` hook
-- [ ] Theme toggle button with animated sun/moon icon transition
-- [ ] Persist theme in `localStorage`
-- [ ] Smooth color transition on theme switch (300ms `transition: background-color, color`)
+- [x] CSS variables for all colors (dark + light mode)
+- [x] Theme context provider + `useTheme` hook
+- [x] Theme toggle button with animated sun/moon icon transition
+- [x] Persist theme in `localStorage`
+- [x] Smooth color transition on theme switch (300ms `transition: background-color, color`)
 
 ### Mock Data
-- [ ] `mockHabits[]` – 8 sample habits with names, colors, icons, streaks
-- [ ] `mockLogs{}` – 90 days of log entries per habit
-- [ ] `mockAnalytics{}` – weekly/monthly aggregated stats
-- [ ] `mockInsights[]` – 5 AI insight messages
-- [ ] `mockAchievements[]` – 10 badges (mix of locked/unlocked)
-- [ ] `mockUser{}` – profile data
+- [x] `mockHabits[]` – 8 sample habits with names, colors, icons, streaks
+- [x] `mockLogs{}` – 90 days of log entries per habit
+- [x] `mockAnalytics{}` – weekly/monthly aggregated stats
+- [x] `mockInsights[]` – 5 AI insight messages
+- [x] `mockAchievements[]` – 10 badges (mix of locked/unlocked)
+- [x] `mockUser{}` – profile data
 
 ---
 
@@ -201,301 +201,301 @@ Habit_OS/
 > **Goal:** A cinematic, immersive scroll journey that converts visitors into users.
 
 ### 🔴 Navbar
-- [ ] Fixed transparent navbar → frosted glass on scroll (transition: `backdrop-blur + bg-opacity`)
-- [ ] Logo + nav links + CTA button
-- [ ] Mobile: hamburger → full-screen animated menu (slide + stagger links)
-- [ ] Active link underline animation (sliding indicator)
+- [x] Fixed transparent navbar → frosted glass on scroll (transition: `backdrop-blur + bg-opacity`)
+- [x] Logo + nav links + CTA button
+- [x] Mobile: hamburger → full-screen animated menu (slide + stagger links)
+- [x] Active link underline animation (sliding indicator)
 
 ### 🟡 Hero Section
-- [ ] **Full-screen** viewport height section
-- [ ] **Aurora gradient background** – animated blob mesh (CSS `@keyframes morphBlob`)
-- [ ] Floating particle dots (CSS + JS, subtle, not distracting)
-- [ ] **Headline** – Word-by-word `fadeInUp` with stagger (Framer Motion)
-- [ ] **Subtitle** – Typewriter reveal after headline completes
-- [ ] **CTA Buttons** – Framer `scaleIn` with stagger delay; hover: lift + glow
-- [ ] **Dashboard Preview Mockup** – Floating app window image with:
+- [x] **Full-screen** viewport height section
+- [x] **Aurora gradient background** – animated blob mesh (CSS `@keyframes morphBlob`)
+- [x] Floating particle dots (CSS + JS, subtle, not distracting)
+- [x] **Headline** – Word-by-word `fadeInUp` with stagger (Framer Motion)
+- [x] **Subtitle** – Typewriter reveal after headline completes
+- [x] **CTA Buttons** – Framer `scaleIn` with stagger delay; hover: lift + glow
+- [x] **Dashboard Preview Mockup** – Floating app window image with:
   - `float` CSS animation (gentle up-down)
   - Soft drop shadow that pulses with glow
   - Scroll-linked: gently scales up as user scrolls past hero
-- [ ] Scroll indicator arrow (bounce animation, fades out on scroll)
+- [x] Scroll indicator arrow (bounce animation, fades out on scroll)
 
 ### 🟡 Features Section
-- [ ] Section title: `fadeInUp` on scroll enter
-- [ ] **6 Feature Cards** in responsive grid:
+- [x] Section title: `fadeInUp` on scroll enter
+- [x] **6 Feature Cards** in responsive grid:
   - Each card: glassmorphism, icon + title + description
   - Scroll-triggered: `staggerContainer` → cards enter `fadeInUp` one by one
   - Hover: card lifts (`y: -8px`), border glow appears, icon scales up
-- [ ] Decorative background: large blurred gradient circle (slow rotation)
+- [x] Decorative background: large blurred gradient circle (slow rotation)
 
 ### 🟡 Stats / Social Proof Section
-- [ ] Background: dark gradient with subtle dot grid pattern
-- [ ] **4 stat counters** (e.g., "50K+ users", "2M+ habits") in a row:
+- [x] Background: dark gradient with subtle dot grid pattern
+- [x] **4 stat counters** (e.g., "50K+ users", "2M+ habits") in a row:
   - Triggered on scroll enter: numbers animate from 0 → target (`useCountUp`)
   - Each counter has a glowing accent underline that animates in after count
-- [ ] Staggered entry: left to right
+- [x] Staggered entry: left to right
 
 ### 🟡 How It Works Section
-- [ ] **3 Steps** displayed as vertical timeline on mobile, horizontal on desktop
-- [ ] Animated connecting line that **draws itself** as user scrolls (SVG stroke-dashoffset)
-- [ ] Each step icon: `scaleIn` animation as line reaches it
-- [ ] Step cards: `slideInLeft` for odd, `slideInRight` for even (alternating)
+- [x] **3 Steps** displayed as vertical timeline on mobile, horizontal on desktop
+- [x] Animated connecting line that **draws itself** as user scrolls (SVG stroke-dashoffset)
+- [x] Each step icon: `scaleIn` animation as line reaches it
+- [x] Step cards: `slideInLeft` for odd, `slideInRight` for even (alternating)
 
 ### 🟡 Heatmap Preview Section
-- [ ] Showcase the heatmap component as a live preview (using mock data)
-- [ ] Scroll-triggered: heatmap cells animate in row by row (staggered `fadeIn`)
-- [ ] Section fades in while slightly parallax-shifted from background text
+- [x] Showcase the heatmap component as a live preview (using mock data)
+- [x] Scroll-triggered: heatmap cells animate in row by row (staggered `fadeIn`)
+- [x] Section fades in while slightly parallax-shifted from background text
 
 ### 🟡 AI Insights Preview Section
-- [ ] 3 rotating insight cards on an angled plane (CSS `perspective + rotateX`)
-- [ ] Auto-cycling every 3s with smooth crossfade
-- [ ] Background: gradient mesh in purple/indigo tones
+- [x] 3 rotating insight cards on an angled plane (CSS `perspective + rotateX`)
+- [x] Auto-cycling every 3s with smooth crossfade
+- [x] Background: gradient mesh in purple/indigo tones
 
 ### 🟡 Testimonials Section
-- [ ] Infinite auto-scroll marquee (horizontal, no buttons needed)
-- [ ] Cards: avatar circle + name + quote + rating stars
-- [ ] On hover: marquee pauses smoothly
+- [x] Infinite auto-scroll marquee (horizontal, no buttons needed)
+- [x] Cards: avatar circle + name + quote + rating stars
+- [x] On hover: marquee pauses smoothly
 
 ### 🟡 CTA / Final Section
-- [ ] Full-width section with animated gradient background
-- [ ] Big headline + subtext + button (all animate in on scroll)
-- [ ] Decorative orbiting rings animation in background
+- [x] Full-width section with animated gradient background
+- [x] Big headline + subtext + button (all animate in on scroll)
+- [x] Decorative orbiting rings animation in background
 
 ### 🟡 Footer
-- [ ] Logo + links + socials
-- [ ] Fade-in on scroll
-- [ ] Links: hover underline slide-in animation
+- [x] Logo + links + socials
+- [x] Fade-in on scroll
+- [x] Links: hover underline slide-in animation
 
 ---
 
 ## ✅ PHASE 3 – Auth Pages
 
 ### Login (`/login`)
-- [ ] **Split-screen layout**: Left panel = animated brand visual, Right = form
-- [ ] Left panel: aurora gradient background + floating HabitOS brand elements + motivational quote cycling
-- [ ] Form card: glassmorphism with subtle border glow
-- [ ] **Floating label inputs**: label transitions from inside → above on focus/fill
-- [ ] Input focus: border color transitions + soft glow
-- [ ] Password toggle: eye icon fade swaps
-- [ ] Submit button: hover glow → loading spinner (scale transition) → success checkmark ✓
-- [ ] Error state: card shake animation + red error messages `fadeInDown`
-- [ ] Link to register: hover underline animation
-- [ ] **"Continue with Google" button**:
-  - Google branded button (white pill with Google logo + text)
-  - Hover: subtle lift + shadow
-  - Click: loading shimmer while OAuth redirects
-  - Divider: `--- or continue with ---` between social and form
+- [x] **Split-screen layout**: Left panel = animated brand visual, Right = form
+- [x] Left panel: aurora gradient background + floating HabitOS brand elements + motivational quote cycling
+- [x] Form card: glassmorphism with subtle border glow
+- [x] **Floating label inputs**: label transitions from inside → above on focus/fill
+- [x] Input focus: border color transitions + soft glow
+- [x] Password toggle: eye icon fade swaps
+- [x] Submit button: hover glow → loading spinner (scale transition) → success checkmark ✓
+- [x] Error state: card shake animation + red error messages `fadeInDown`
+- [x] Link to register: hover underline animation
+- [x] **"Continue with Google" button**:
+  - [x] Google branded button (white pill with Google logo + text)
+  - [x] Hover: subtle lift + shadow
+  - [x] Click: loading shimmer while OAuth redirects
+  - [x] Divider: `--- or continue with ---` between social and form
 - [ ] Show "Invalid email domain" error if Google account email is rejected
 
 ### Register (`/register`)
-- [ ] Same split-screen layout
-- [ ] **Multi-step form** (2 steps) with animated step transition:
-  - Step 1: Name + Email
-  - Step 2: Password + Confirm + Terms
-  - Progress bar between steps animates
-- [ ] **Password strength bar**: width animates 0→100% with color change (red→yellow→green)
-- [ ] Confetti burst on successful register
-- [ ] **"Sign up with Google" button** (same styling as login, above the form)
-  - If Google OAuth succeeds: skip password step entirely, jump to profile setup
-  - Show Google avatar + name pre-filled after OAuth
+- [x] Same split-screen layout
+- [x] **Multi-step form** (2 steps) with animated step transition:
+  - [x] Step 1: Name + Email
+  - [x] Step 2: Password + Confirm + Terms
+  - [x] Progress bar between steps animates
+- [x] **Password strength bar**: width animates 0→100% with color change (red→yellow→green)
+- [x] Confetti burst on successful register
+- [x] **"Sign up with Google" button** (same styling as login, above the form)
+  - [ ] If Google OAuth succeeds: skip password step entirely, jump to profile setup
+  - [ ] Show Google avatar + name pre-filled after OAuth
 
 ### OAuth Callback Page (`/auth/callback`)
-- [ ] Full-screen centered loading spinner with brand logo
-- [ ] Animated status text: "Authenticating with Google..."
-- [ ] Success: redirect to `/dashboard` with welcome toast
-- [ ] Error: redirect to `/login` with error message toast
+- [x] Full-screen centered loading spinner with brand logo
+- [x] Animated status text: "Authenticating with Google..."
+- [x] Success: redirect to `/dashboard` with welcome toast
+- [x] Error: redirect to `/login` with error message toast
 
 ---
 
 ## ✅ PHASE 4 – Dashboard UI (`/dashboard`)
 
 ### Layout
-- [ ] **Sidebar** (fixed desktop, drawer mobile):
-  - Collapsed state: icon-only with tooltip (width animation)
-  - Expanded: icon + label (Framer `AnimatePresence` for label text)
-  - Active item: animated background pill that slides to match active route
-  - Hover: items scale slightly with color transition
-- [ ] **Top header**: frosted glass, notification bell with badge pulse animation
-- [ ] **Page enter**: staggered card grid entrance (all cards `fadeInUp` with 0.1s interval)
+- [x] **Sidebar** (fixed desktop, drawer mobile):
+  - [x] Collapsed state: icon-only with tooltip (width animation)
+  - [x] Expanded: icon + label (Framer `AnimatePresence` for label text)
+  - [x] Active item: animated background pill that slides to match active route
+  - [x] Hover: items scale slightly with color transition
+- [x] **Top header**: frosted glass, notification bell with badge pulse animation
+- [x] **Page enter**: staggered card grid entrance (all cards `fadeInUp` with 0.1s interval)
 
 ### Widget Animations
-- [ ] **Greeting strip** – typewriter "Good morning, Harshit 👋"
-- [ ] **Daily Score Ring** – SVG circle stroke-dashoffset animates from 0 to score on mount
-- [ ] **Streak Flame** – animated `@keyframes flicker` on flame SVG icon; number `countUp`
-- [ ] **Quick Habit Toggles** – spring bounce on toggle; green glow appears when ON
-- [ ] **Quote Card** – fade in; refresh icon spins 360° on click → new quote fades in
-- [ ] **Mini Line Chart** – Recharts `isAnimationActive` draws line on mount
-- [ ] **Activity Feed** – items slide in from right with stagger (newest first)
-- [ ] **Mini Heatmap** – cells `fadeIn` left-to-right with stagger
+- [x] **Greeting strip** – typewriter "Good morning, Harshit 👋"
+- [x] **Daily Score Ring** – SVG circle stroke-dashoffset animates from 0 to score on mount
+- [x] **Streak Flame** – animated `@keyframes flicker` on flame SVG icon; number `countUp`
+- [x] **Quick Habit Toggles** – spring bounce on toggle; green glow appears when ON
+- [x] **Quote Card** – fade in; refresh icon spins 360° on click → new quote fades in
+- [x] **Mini Line Chart** – Recharts `isAnimationActive` draws line on mount
+- [x] **Activity Feed** – items slide in from right with stagger (newest first)
+- [x] **Mini Heatmap** – cells `fadeIn` left-to-right with stagger
 
 ---
 
 ## ✅ PHASE 5 – Habits Management UI (`/habits`)
 
-- [ ] **Page header**: `fadeInDown`; "New Habit" button pulses gently until first habit created
-- [ ] **Habit Grid**: cards `fadeInUp` staggered on load
-- [ ] **Habit Card**:
-  - Hover: `y: -6px`, border accent glow, progress bar brightens
-  - Color accent bar on left animates in (height 0→100%)
-  - Streak number: `countUp` on mount
-  - Complete toggle: spring bounce, green ripple effect
-- [ ] **Create Modal**:
-  - Backdrop: `fadeIn` blur overlay
-  - Card: `scaleIn` from center
-  - Icon picker grid: icons `fadeIn` with stagger
-  - Color picker: dots scale up on hover/select with ripple
-  - Exit: `scaleOut` + backdrop fades
-- [ ] **Archive slide-out**: card `slideOutLeft` + shrink to 0 height
-- [ ] **Delete**: card shake animation → confirmation → `fadeOut + scale(0.8)`
-- [ ] **Drag reorder**: `react-beautiful-dnd` or Framer drag with drag shadow
+- [x] **Page header**: `fadeInDown`; "New Habit" button pulses gently until first habit created
+- [x] **Habit Grid**: cards `fadeInUp` staggered on load
+- [x] **Habit Card**:
+  - [x] Hover: `y: -6px`, border accent glow, progress bar brightens
+  - [x] Color accent bar on left animates in (height 0→100%)
+  - [x] Streak number: `countUp` on mount
+  - [x] Complete toggle: spring bounce, green ripple effect
+- [x] **Create Modal**:
+  - [x] Backdrop: `fadeIn` blur overlay
+  - [x] Card: `scaleIn` from center
+  - [x] Icon picker grid: icons `fadeIn` with stagger
+  - [x] Color picker: dots scale up on hover/select with ripple
+  - [x] Exit: `scaleOut` + backdrop fades
+- [x] **Archive slide-out**: card `slideOutLeft` + shrink to 0 height
+- [x] **Delete**: card shake animation → confirmation → `fadeOut + scale(0.8)`
+- [x] **Drag reorder**: `react-beautiful-dnd` or Framer drag with drag shadow
 
 ---
 
 ## ✅ PHASE 6 – Daily Logs UI (`/logs`)
 
-- [ ] **Date bar**: slide transition between days (prev slides left, next slides right)
-- [ ] **Log list**: items `fadeInUp` staggered on date change
-- [ ] **Boolean toggle**: custom animated switch (pill slides left/right, color morphs)
-- [ ] **Numeric stepper**: +/- buttons with press-down scale; value flips like a counter
-- [ ] **Note field**: expands smoothly with `max-height` transition
-- [ ] **Progress bar**: `progressFill` animates whenever count changes
-- [ ] **"All Done!" confetti** burst via `canvas-confetti` when all habits logged
-- [ ] **Auto-save toast**: slides in from bottom-right → "Saved ✓" → slides out after 2s
+- [x] **Date bar**: slide transition between days (prev slides left, next slides right)
+- [x] **Log list**: items `fadeInUp` staggered on date change
+- [x] **Boolean toggle**: custom animated switch (pill slides left/right, color morphs)
+- [x] **Numeric stepper**: +/- buttons with press-down scale; value flips like a counter
+- [x] **Note field**: expands smoothly with `max-height` transition
+- [x] **Progress bar**: `progressFill` animates whenever count changes
+- [x] **"All Done!" confetti** burst via `canvas-confetti` when all habits logged
+- [x] **Auto-save toast**: slides in from bottom-right → "Saved ✓" → slides out after 2s
 
 ---
 
 ## ✅ PHASE 7 – Analytics & Reports UI (`/analytics`)
 
-- [ ] **Tab filter**: animated underline indicator slides between tabs
-- [ ] **Stat Cards Row**: `staggerContainer` → cards `fadeInUp`; numbers `countUp`
-- [ ] **Line Chart**: Recharts animated draw + custom dot pulse on hover
-- [ ] **Bar Chart**: bars grow from bottom on mount (Recharts animation)
-- [ ] **Donut Chart**: arc animates from 0° to full on mount
-- [ ] **Streak Timeline**: cells fade in left-to-right with stagger
-- [ ] **Habit selector dropdown**: animated open/close with `scaleY`
-- [ ] **CSV Export**: button click → spinner → success icon
+- [x] **Tab filter**: animated underline indicator slides between tabs
+- [x] **Stat Cards Row**: `staggerContainer` → cards `fadeInUp`; numbers `countUp`
+- [x] **Line Chart**: Recharts animated draw + custom dot pulse on hover
+- [x] **Bar Chart**: bars grow from bottom on mount (Recharts animation)
+- [x] **Donut Chart**: arc animates from 0° to full on mount
+- [x] **Streak Timeline**: cells fade in left-to-right with stagger
+- [x] **Habit selector dropdown**: animated open/close with `scaleY`
+- [x] **CSV Export**: button click → spinner → success icon
 
 ---
 
 ## ✅ PHASE 8 – Heatmap Calendar UI (`/heatmap`)
 
-- [ ] **Grid cells load**: left-to-right, row-by-row `fadeIn` with `staggerChildren`
+- [x] **Grid cells load**: left-to-right, row-by-row `fadeIn` with `staggerChildren`
   - 364 cells total, stagger delay: ~3ms per cell = ~1.1s total entrance
-- [ ] **Cell hover**: scale(1.3) + tooltip `fadeIn` + glow border
-- [ ] **Tooltip**: positioned above cell, appears with `scaleIn` from bottom
-- [ ] **Sidebar panel** (on cell click): slides in from right (`x: 100%` → `x: 0`)
-- [ ] **Habit filter change**: grid cells cross-fade to new color intensity
-- [ ] **Year switch**: entire grid slides out left, new year slides in from right
-- [ ] **Color theme switch**: all cells transition color with `transition: background-color 400ms`
+- [x] **Cell hover**: scale(1.3) + tooltip `fadeIn` + glow border
+- [x] **Tooltip**: positioned above cell, appears with `scaleIn` from bottom
+- [x] **Sidebar panel** (on cell click): slides in from right (`x: 100%` → `x: 0`)
+- [x] **Habit filter change**: grid cells cross-fade to new color intensity
+- [x] **Year switch**: entire grid slides out left, new year slides in from right
+- [x] **Color theme switch**: all cells transition color with `transition: background-color 400ms`
 
 ---
 
 ## ✅ PHASE 9 – AI Insights UI (`/insights`)
 
-- [ ] **Page enter**: section title `fadeInUp` → cards stagger in
-- [ ] **Insight Cards**: `slideInLeft` with stagger; confidence bar animates `progressFill`
-- [ ] **Gauge Chart**: needle animates 0 → score on mount (SVG rotation)
-- [ ] **Skeleton shimmer**: while "loading" state active, cards show animated shimmer
-- [ ] **Quote refresh**: current quote `fadeOut` → new quote `fadeIn`
-- [ ] **Suggestion chips**: `scaleIn` with stagger; hover: slight lift + border glow
-- [ ] **Weekly narrative**: collapsed by default, expand with smooth `max-height` transition
+- [x] **Page enter**: section title `fadeInUp` → cards stagger in
+- [x] **Insight Cards**: `slideInLeft` with stagger; confidence bar animates `progressFill`
+- [x] **Gauge Chart**: needle animates 0 → score on mount (SVG rotation)
+- [x] **Skeleton shimmer**: while "loading" state active, cards show animated shimmer
+- [x] **Quote refresh**: current quote `fadeOut` → new quote `fadeIn`
+- [x] **Suggestion chips**: `scaleIn` with stagger; hover: slight lift + border glow
+- [x] **Weekly narrative**: collapsed by default, expand with smooth `max-height` transition
 
 ---
 
 ## ✅ PHASE 10 – Achievements UI (`/achievements`)
 
-- [ ] **Badge grid**: `staggerContainer` → badges `scaleIn` from center
-- [ ] **Locked badges**: greyscale + `opacity: 0.4` + lock icon overlay
-- [ ] **Unlocked badges**: full color + glow animation on hover
-- [ ] **Unlock animation** (triggered on earn): badge glows → burst of particles → pop scale effect
-- [ ] **Progress bars**: `progressFill` animated on mount
-- [ ] **Leaderboard**: rows slide in from bottom with stagger; rank numbers count up
+- [x] **Badge grid**: `staggerContainer` → badges `scaleIn` from center
+- [x] **Locked badges**: greyscale + `opacity: 0.4` + lock icon overlay
+- [x] **Unlocked badges**: full color + glow animation on hover
+- [x] **Unlock animation** (triggered on earn): badge glows → burst of particles → pop scale effect
+- [x] **Progress bars**: `progressFill` animated on mount
+- [x] **Leaderboard**: rows slide in from bottom with stagger; rank numbers count up
 
 ---
 
 ## ✅ PHASE 11 – Settings UI (`/settings`)
 
-- [ ] **Section nav**: animated active indicator slides vertically between sections
-- [ ] **Toggle switches**: spring-physics pill transition (left↔right, color morphs)
-- [ ] **Avatar upload**: hover overlay fades in with camera icon
-- [ ] **Color picker**: circles scale on hover/select + ripple on select
-- [ ] **Save button**: press-down scale → loading spinner → success checkmark
+- [x] **Section nav**: animated active indicator slides vertically between sections
+- [x] **Toggle switches**: spring-physics pill transition (left↔right, color morphs)
+- [x] **Avatar upload**: hover overlay fades in with camera icon
+- [x] **Color picker**: circles scale on hover/select + ripple on select
+- [x] **Save button**: press-down scale → loading spinner → success checkmark
 
 ---
 
 ## ✅ PHASE 12 – Global Animation Pass & UI Polish
 
 ### 🟣 Scroll Reveal System (All Pages)
-- [ ] Wrap all section blocks with `<ScrollReveal>` component
-- [ ] Config options: `direction` (up/left/right), `delay`, `threshold`
-- [ ] Stagger lists automatically when `stagger` prop passed
-- [ ] Ensure all analytics cards, insight cards, habit cards use scroll-reveal
+- [x] Wrap all section blocks with `<ScrollReveal>` component
+- [x] Config options: `direction` (up/left/right), `delay`, `threshold`
+- [x] Stagger lists automatically when `stagger` prop passed
+- [x] Ensure all analytics cards, insight cards, habit cards use scroll-reveal
 
 ### 🟣 Route Transitions (All Pages)
-- [ ] Wrap `app/layout.tsx` children with `<AnimatePresence mode="wait">`
-- [ ] Each page exports `motion.div` with `pageTransition` variant
-- [ ] Transition: `opacity: 0, y: 10` → `opacity: 1, y: 0` (200ms) → `opacity: 0, y: -10`
+- [x] Wrap `app/layout.js` children with `<AnimatePresence mode="wait">`
+- [x] Each page exports `motion.div` with `pageTransition` variant
+- [x] Transition: `opacity: 0, y: 10` → `opacity: 1, y: 0` (200ms) → `opacity: 0, y: -10`
 
 ### 🟣 Parallax Layers (Landing + Dashboard)
-- [ ] Hero: background blobs move at 0.3× scroll speed, foreground content at 1×
-- [ ] Dashboard: background gradient shifts subtly on mouse move (`useMousePosition` hook)
+- [x] Hero: background blobs move at 0.3× scroll speed, foreground content at 1×
+- [x] Dashboard: background gradient shifts subtly on mouse move (`useMousePosition` hook)
 
 ### 🟣 Toast Notification System
-- [ ] Global toast context (bottom-right stack)
-- [ ] Variants: success (green), error (red), info (blue), warning (yellow)
-- [ ] Enter: `slideInRight`; Exit: `slideOutRight + fadeOut`
-- [ ] Auto-dismiss: 3s with visible countdown progress bar
+- [x] Global toast context (bottom-right stack)
+- [x] Variants: success (green), error (red), info (blue), warning (yellow)
+- [x] Enter: `slideInRight`; Exit: `slideOutRight + fadeOut`
+- [x] Auto-dismiss: 3s with visible countdown progress bar
 
 ### 🟣 Loading & Skeleton States
-- [ ] Global `<Skeleton>` component with shimmer animation
-- [ ] Skeleton variants: text line, card, chart, heatmap cell
-- [ ] Apply to all data-dependent components
+- [x] Global `<Skeleton>` component with shimmer animation
+- [x] Skeleton variants: text line, card, chart, heatmap cell
+- [x] Apply to all data-dependent components
 
 ### 🟣 Performance & Accessibility
-- [ ] `will-change: transform` on frequently animated elements
-- [ ] `prefers-reduced-motion` media query → disable all motion, show instant transitions
-- [ ] Ensure animations don't block main thread (use GPU-composited properties only: `transform`, `opacity`)
-- [ ] Test on 60fps and 30fps devices
+- [x] `will-change: transform` on frequently animated elements
+- [x] `prefers-reduced-motion` media query → disable all motion, show instant transitions
+- [x] Ensure animations don't block main thread (use GPU-composited properties only: `transform`, `opacity`)
+- [x] Test on 60fps and 30fps devices
 
 ### 🟣 Final Design Audit
-- [ ] Consistent border radius (`rounded-2xl` for cards, `rounded-full` for pills)
-- [ ] Shadow scale: `sm / md / lg / glow` — applied consistently
-- [ ] Spacing audit (8px base grid)
-- [ ] Font scale: Display / H1 / H2 / H3 / Body / Caption
-- [ ] All interactive elements have `:focus-visible` ring
-- [ ] Custom scrollbar: thin, accent-colored, both light + dark modes
-- [ ] Responsive: 375px / 768px / 1024px / 1280px / 1920px
+- [x] Consistent border radius (`rounded-2xl` for cards, `rounded-full` for pills)
+- [x] Shadow scale: `sm / md / lg / glow` — applied consistently
+- [x] Spacing audit (8px base grid)
+- [x] Font scale: Display / H1 / H2 / H3 / Body / Caption
+- [x] All interactive elements have `:focus-visible` ring
+- [x] Custom scrollbar: thin, accent-colored, both light + dark modes
+- [x] Responsive: 375px / 768px / 1024px / 1280px / 1920px
 
 ---
 
 ## 🔵 PHASE 13 – Backend: Project Setup, Architecture & Database
 
 ### 13.1 Server Initialization
-- [ ] Initialize Node.js + TypeScript project in `server/`
+- [ ] Initialize Node.js + JavaScript project in `server/`
 - [ ] Install core: `express`, `mongoose`, `dotenv`, `cors`, `helmet`, `compression`, `morgan`
-- [ ] Install dev: `ts-node`, `nodemon`, `@types/express`, `typescript`, `jest`, `supertest`
+- [ ] Install dev: ``, `nodemon`, ``, `typescript`, `jest`, `supertest`
 - [ ] Install validation: `zod`, `express-validator`, `xss-clean`, `express-mongo-sanitize`
-- [ ] Configure `tsconfig.json` (strict mode, paths, outDir: `dist/`)
-- [ ] `src/index.ts` – server listen + graceful shutdown on `SIGTERM`
-- [ ] `src/app.ts` – Express app factory (middleware + routes assembled here)
+- [ ] Configure `jsconfig.json` (strict mode, paths, outDir: `dist/`)
+- [ ] `src/index.js` – server listen + graceful shutdown on `SIGTERM`
+- [ ] `src/app.js` – Express app factory (middleware + routes assembled here)
 
 ### 13.2 Backend Folder Structure
 ```
 server/src/
 ├─ config/
-│   ├─ db.ts               # MongoDB connect with retry + exponential backoff
-│   ├─ env.ts              # Zod-validated env schema (crash if missing vars)
-│   └─ constants.ts        # JWT expiries, rate limits, score weights
+│   ├─ db.js               # MongoDB connect with retry + exponential backoff
+│   ├─ env.js              # Zod-validated env schema (crash if missing vars)
+│   └─ constants.js        # JWT expiries, rate limits, score weights
 ├─ models/                 # Mongoose schemas + TS interfaces
 ├─ routes/                 # Express routers (one per resource)
 ├─ controllers/            # Thin handlers → delegate to services
 ├─ services/               # Business logic (habits, streak, score, ai, email)
 ├─ middleware/             # auth, validate, errorHandler, rateLimiter, requestId
 ├─ utils/
-│   ├─ ApiResponse.ts      # Standard success envelope
-│   ├─ ApiError.ts         # Structured error class
-│   ├─ asyncHandler.ts     # Eliminates try/catch boilerplate
-│   ├─ logger.ts           # Winston (console + file, levels)
-│   └─ paginate.ts         # Offset + cursor pagination helper
+│   ├─ ApiResponse.js      # Standard success envelope
+│   ├─ ApiError.js         # Structured error class
+│   ├─ asyncHandler.js     # Eliminates try/catch boilerplate
+│   ├─ logger.js           # Winston (console + file, levels)
+│   └─ paginate.js         # Offset + cursor pagination helper
 ├─ jobs/                   # node-cron scheduled jobs
 ├─ emails/                 # Templates + sender service
 └─ types/                  # Shared TS types/interfaces
@@ -610,8 +610,8 @@ promptHash (MD5), response (string), expiresAt, createdAt
   - Prod: `https://yourdomain.com/api/auth/google/callback`
 - [ ] Add env vars: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
 
-#### Passport.js Google Strategy (`services/googleAuth.service.ts`)
-- [ ] Install: `passport`, `passport-google-oauth20`, `@types/passport-google-oauth20`
+#### Passport.js Google Strategy (`services/googleAuth.service.js`)
+- [ ] Install: `passport`, `passport-google-oauth20`, ``
 - [ ] Initialize `passport.use(new GoogleStrategy({ clientID, clientSecret, callbackURL }, verify))`
 - [ ] **Verify callback logic**:
   1. Extract `profile.emails[0].value` (verified email from Google)
@@ -745,13 +745,13 @@ promptHash (MD5), response (string), expiresAt, createdAt
 - [ ] `DELETE /api/logs/:id` – remove log entry
 - [ ] `GET /api/logs/streak/:habitId` – return `{ current, longest, atRisk }`
 
-### 15.3 Streak Service (`services/streak.service.ts`)
+### 15.3 Streak Service (`services/streak.service.js`)
 - [ ] `calculateCurrentStreak(userId, habitId)` – walk backwards from today counting consecutive logged days; frequency-aware (weekly habits skip unscheduled days)
 - [ ] `calculateLongestStreak(userId, habitId)` – scan all logs, track max consecutive run
 - [ ] `isStreakAtRisk(userId, habitId)` – today not logged AND current streak > 0
 - [ ] Batch streak calculator for dashboard: process all habits in parallel with `Promise.all`
 
-### 15.4 Achievement Trigger Service (`services/achievement.service.ts`)
+### 15.4 Achievement Trigger Service (`services/achievement.service.js`)
 - [ ] Called asynchronously after every log creation
 - [ ] Achievement types:
   | Badge | Trigger Condition |
@@ -824,7 +824,7 @@ score         = Math.round(base + streakBonus + consistency + moodBonus)
 
 ## 🔵 PHASE 17 – Backend: AI Intelligence API
 
-### 17.1 OpenAI Service (`services/openai.service.ts`)
+### 17.1 OpenAI Service (`services/openai.service.js`)
 - [ ] Initialize `openai` client with `OPENAI_API_KEY`
 - [ ] `callOpenAI({ model, systemPrompt, userPrompt, maxTokens, temperature })` base wrapper
 - [ ] Retry: 3 attempts with exponential backoff on 429 (rate limit) and 500+ errors
@@ -832,7 +832,7 @@ score         = Math.round(base + streakBonus + consistency + moodBonus)
 - [ ] Daily token budget guard: if user exceeds `AI_DAILY_TOKEN_LIMIT`, return fallback
 - [ ] Feature flag: if `AI_ENABLED=false`, all endpoints return pre-written fallback responses
 
-### 17.2 AI Cache Layer (`services/aiCache.service.ts`)
+### 17.2 AI Cache Layer (`services/aiCache.service.js`)
 - [ ] `getCached(userId, type, inputHash)` – look up `AiCache` where `expiresAt > now`
 - [ ] `setCache(userId, type, inputHash, response, ttlHours)` – store with expiry
 - [ ] `inputHash = md5(JSON.stringify(sortedInput))` – deterministic hash
@@ -901,23 +901,23 @@ score         = Math.round(base + streakBonus + consistency + moodBonus)
 - [ ] `GET /api/settings/email/unsubscribe?token=` – one-click unsubscribe (verify JWT, set `enabled: false`)
 
 ### 18.4 Cron Jobs (`jobs/`)
-- [ ] **`dailySummary.job.ts`** – `0 * * * *` (hourly tick)
+- [ ] **`dailySummary.job.js`** – `0 * * * *` (hourly tick)
   - For each user: check if `dailySummaryTime` matches current UTC hour considering timezone
   - Compute today's analytics → generate email → send → update `lastEmailSentAt`
   - Skip if `dailySummaryEnabled: false` or `enabled: false`
-- [ ] **`weeklyReport.job.ts`** – `0 8 * * 0` (Sundays 8am UTC)
+- [ ] **`weeklyReport.job.js`** – `0 8 * * 0` (Sundays 8am UTC)
   - Fetch users with `weeklyReportEnabled: true`
   - Run weekly aggregation → send report email
-- [ ] **`streakReminder.job.ts`** – `0 18 * * *` (6pm UTC daily)
+- [ ] **`streakReminder.job.js`** – `0 18 * * *` (6pm UTC daily)
   - Find users where any habit has `isStreakAtRisk: true`
   - Respect user timezone (send at 6pm local)
   - Send streak-at-risk email
-- [ ] **`missedHabitAlert.job.ts`** – `0 20 * * *` (8pm UTC daily)
+- [ ] **`missedHabitAlert.job.js`** – `0 20 * * *` (8pm UTC daily)
   - Find habits not logged in 2+ consecutive days for each user
   - Send gentle reminder (max once per habit per 3 days)
-- [ ] **`achievementCheck.job.ts`** – `*/30 * * * *` (every 30 min)
+- [ ] **`achievementCheck.job.js`** – `*/30 * * * *` (every 30 min)
   - Run achievement checks for users who logged in last 30min
-- [ ] **`aiCacheCleanup.job.ts`** – `0 3 * * *` (3am daily)
+- [ ] **`aiCacheCleanup.job.js`** – `0 3 * * *` (3am daily)
   - Delete expired `AiCache` docs (backup for TTL index)
 - [ ] **Graceful shutdown**: all jobs stopped cleanly on `SIGTERM` before process exits
 
