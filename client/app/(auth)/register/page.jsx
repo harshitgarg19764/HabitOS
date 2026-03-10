@@ -10,6 +10,7 @@ import { AuthLayout } from '@/components/auth/AuthLayout';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
+import { useAuth } from '@/contexts/AuthContext';
 
 const passwordRequirements = [
   { id: 'length', label: 'At least 8 characters', test: (p) => p.length >= 8 },
@@ -20,6 +21,7 @@ const passwordRequirements = [
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { register } = useAuth();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -79,27 +81,33 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await register(formData.name, formData.email, formData.password);
       
-      // Confetti burst
       confetti({
         particleCount: 100,
         spread: 70,
         origin: { y: 0.6 },
         colors: ['#8b5cf6', '#3b82f6', '#10b981', '#f59e0b']
       });
-
+      
       router.push('/dashboard');
     } catch (err) {
-      setError('Something went wrong. Please try again.');
+      setError(err.message || 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   const handleGoogleRegister = () => {
-    console.log('Google register clicked');
+    const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+    const redirectUri = `${window.location.origin}/api/auth/google/callback`;
+    
+    if (clientId) {
+      const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=openid%20email%20profile&prompt=select_account`;
+      window.location.href = googleAuthUrl;
+    } else {
+      console.log('Google OAuth not configured');
+    }
   };
 
   return (

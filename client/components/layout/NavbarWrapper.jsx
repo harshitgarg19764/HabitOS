@@ -6,13 +6,11 @@ import { Navbar } from '../landing/Navbar';
 
 export function NavbarWrapper({ children }) {
   const pathname = usePathname();
-  const isAuthPage = pathname?.startsWith('/login') || 
-                     pathname?.startsWith('/register') || 
-                     pathname?.startsWith('/auth');
-  
+  const isLandingPage = pathname === '/';
+
   return (
     <>
-      {!isAuthPage && <Navbar />}
+      {isLandingPage && <Navbar />}
       <PageTransition>
         {children}
       </PageTransition>

@@ -113,11 +113,6 @@ export function DashboardHeader() {
             )}
           </AnimatePresence>
         </div>
-
-        {/* Theme Toggle Placeholder */}
-        <button className="w-10 h-10 rounded-full bg-muted/50 flex items-center justify-center hover:bg-muted transition-colors">
-          <div className="w-4 h-4 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500" />
-        </button>
       </div>
     </header>
   );

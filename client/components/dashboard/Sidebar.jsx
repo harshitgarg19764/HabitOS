@@ -16,8 +16,11 @@ import {
   ChevronLeft,
   ChevronRight,
   LogOut,
+  User,
+  ChevronsUpDown,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/contexts/AuthContext';
 
 const navItems = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -33,9 +36,21 @@ const navItems = [
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
   const pathname = usePathname();
+  const { user, logout } = useAuth();
 
   const activeIndex = navItems.findIndex(item => pathname?.startsWith(item.href));
+
+  const getInitials = (name) => {
+    if (!name) return '?';
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  };
+
+  const handleLogout = async () => {
+    setShowProfileMenu(false);
+    await logout();
+  };
 
   return (
     <>
@@ -93,7 +108,7 @@ export function Sidebar() {
               )}
             </AnimatePresence>
           </Link>
-          
+
           {/* Collapse Toggle - Desktop Only */}
           <button
             onClick={() => setCollapsed(!collapsed)}
@@ -149,7 +164,7 @@ export function Sidebar() {
                     </AnimatePresence>
 
                     <Icon className={cn('w-5 h-5 flex-shrink-0', isActive && 'text-primary')} />
-                    
+
                     <AnimatePresence>
                       {!collapsed && (
                         <motion.span
@@ -169,52 +184,132 @@ export function Sidebar() {
           </ul>
         </nav>
 
-        {/* Bottom Section */}
-        <div className="p-3 border-t border-border">
-          {/* User Profile */}
-          <div className={cn(
-            'flex items-center gap-3 p-2 rounded-xl hover:bg-muted/50 transition-colors cursor-pointer',
-            collapsed && 'justify-center'
-          )}>
-            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-medium text-sm flex-shrink-0">
-              H
+        {/* Profile Section - Bottom */}
+        <div className="relative p-3 border-t border-border">
+          {/* Upward-opening Profile Dropdown */}
+          <AnimatePresence>
+            {showProfileMenu && (
+              <>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="fixed inset-0 z-40"
+                  onClick={() => setShowProfileMenu(false)}
+                />
+                <motion.div
+                  initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                  transition={{ duration: 0.15, ease: 'easeOut' }}
+                  className={cn(
+                    'absolute z-50 bg-background border border-border rounded-2xl shadow-2xl shadow-black/20 dark:shadow-black/40 overflow-hidden',
+                    collapsed
+                      ? 'bottom-full left-1 mb-2 w-56'
+                      : 'bottom-full left-3 right-3 mb-2'
+                  )}
+                >
+                  {/* Profile Header */}
+                  <div className="p-4 bg-gradient-to-br from-primary/5 to-accent/5">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm flex-shrink-0 ring-2 ring-background shadow-lg">
+                        {user?.avatar ? (
+                          <img src={user.avatar} alt={user.name} className="w-full h-full rounded-full object-cover" />
+                        ) : (
+                          getInitials(user?.name)
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold truncate">{user?.name || 'User'}</p>
+                        <p className="text-xs text-muted-foreground truncate">{user?.email || 'user@example.com'}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Menu Items */}
+                  <div className="p-1.5">
+                    <Link
+                      href="/settings"
+                      onClick={() => setShowProfileMenu(false)}
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                    >
+                      <User className="w-4 h-4" />
+                      <span>Profile</span>
+                    </Link>
+                    <Link
+                      href="/settings"
+                      onClick={() => setShowProfileMenu(false)}
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                    >
+                      <Settings className="w-4 h-4" />
+                      <span>Settings</span>
+                    </Link>
+                    <div className="my-1 border-t border-border" />
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-red-500 hover:bg-red-500/10 transition-colors"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      <span>Logout</span>
+                    </button>
+                  </div>
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
+
+          {/* Profile Trigger Button */}
+          <motion.button
+            onClick={() => setShowProfileMenu(!showProfileMenu)}
+            whileTap={{ scale: 0.97 }}
+            className={cn(
+              'w-full flex items-center gap-3 p-2 rounded-xl transition-all duration-200 group',
+              'hover:bg-muted/60 active:bg-muted/80',
+              showProfileMenu && 'bg-muted/60',
+              collapsed && 'justify-center'
+            )}
+          >
+            {/* Avatar */}
+            <div className="relative flex-shrink-0">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm shadow-md shadow-indigo-500/20">
+                {user?.avatar ? (
+                  <img src={user.avatar} alt={user.name} className="w-full h-full rounded-full object-cover" />
+                ) : (
+                  getInitials(user?.name)
+                )}
+              </div>
+              {/* Online Status Dot */}
+              <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-background" />
             </div>
+
+            {/* Name & Email */}
             <AnimatePresence>
               {!collapsed && (
                 <motion.div
                   initial={{ opacity: 0, width: 0 }}
                   animate={{ opacity: 1, width: 'auto' }}
                   exit={{ opacity: 0, width: 0 }}
-                  className="flex-1 min-w-0"
+                  className="flex-1 min-w-0 text-left"
                 >
-                  <p className="text-sm font-medium truncate">Harshit</p>
-                  <p className="text-xs text-muted-foreground truncate">Pro Member</p>
+                  <p className="text-sm font-semibold truncate">{user?.name || 'User'}</p>
+                  <p className="text-xs text-muted-foreground truncate">{user?.email || 'Free plan'}</p>
                 </motion.div>
               )}
             </AnimatePresence>
-          </div>
 
-          {/* Logout */}
-          <button
-            className={cn(
-              'w-full flex items-center gap-3 px-3 py-2.5 mt-1 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors',
-              collapsed && 'justify-center'
-            )}
-          >
-            <LogOut className="w-5 h-5 flex-shrink-0" />
+            {/* Expand Icon */}
             <AnimatePresence>
               {!collapsed && (
-                <motion.span
-                  initial={{ opacity: 0, width: 0 }}
-                  animate={{ opacity: 1, width: 'auto' }}
-                  exit={{ opacity: 0, width: 0 }}
-                  className="text-sm font-medium whitespace-nowrap overflow-hidden"
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
                 >
-                  Logout
-                </motion.span>
+                  <ChevronsUpDown className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors flex-shrink-0" />
+                </motion.div>
               )}
             </AnimatePresence>
-          </button>
+          </motion.button>
         </div>
       </motion.aside>
     </>

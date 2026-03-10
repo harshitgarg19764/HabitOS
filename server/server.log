@@ -1,0 +1,42 @@
+2026-03-09 20:47:27 [[32minfo[39m]: [32mEnvironment variables validated successfully[39m
+CWD: /home/harshit/harshit/Habit_OS/server
+Looking for .env at: /home/harshit/harshit/Habit_OS/.env
+.env exists: false
+MONGO_URI after dotenv: mongodb://localhost:27017/habitos
+(node:136472) [MONGOOSE] Warning: Duplicate schema index on {"email":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+2026-03-09 20:47:32 [[33mwarn[39m]: [33mMongoDB not available, trying in-memory server...[39m
+2026-03-09 20:47:32 [[32minfo[39m]: [32mMongoDB Memory Server started[39m
+2026-03-09 20:47:32 [[32minfo[39m]: [32mMongoDB connected successfully[39m
+2026-03-09 20:47:32 [[32minfo[39m]: [32m🚀 Server running on port 5000[39m
+2026-03-09 20:47:32 [[32minfo[39m]: [32mEnvironment: development[39m
+2026-03-09 20:47:42 [[35mhttp[39m]: [35m[0mGET /health [32m200[0m 1.809 ms - 46[0m[39m
+2026-03-09 20:47:49 [[35mhttp[39m]: [35m[0mPOST /api/auth/register [32m201[0m 249.526 ms - 605[0m[39m
+2026-03-09 20:47:56 [[35mhttp[39m]: [35m[0mPOST /api/auth/login [32m200[0m 224.230 ms - 598[0m[39m
+2026-03-09 20:52:05 [[31merror[39m]: [31mErrorId: f494f0fb-fc5f-4b85-9acb-283c934d21b4 | Status: 404 | Message: Route / not found[39m
+2026-03-09 20:52:05 [[35mhttp[39m]: [35m[0mGET / [33m404[0m 1.612 ms - -[0m[39m
+2026-03-09 20:52:05 [[31merror[39m]: [31mErrorId: 1a957954-e392-4e22-9a5f-98546e19677e | Status: 404 | Message: Route /favicon.ico not found[39m
+2026-03-09 20:52:05 [[35mhttp[39m]: [35m[0mGET /favicon.ico [33m404[0m 0.509 ms - -[0m[39m
+2026-03-09 20:52:36 [[35mhttp[39m]: [35m[0mPOST /api/auth/register [32m201[0m 222.768 ms - 599[0m[39m
+2026-03-09 20:52:40 [[31merror[39m]: [31mErrorId: be0ae858-d608-45f3-a5fd-f3a30b7b7bb9 | Status: 409 | Message: Email already registered[39m
+2026-03-09 20:52:40 [[35mhttp[39m]: [35m[0mPOST /api/auth/register [33m409[0m 3.288 ms - 402[0m[39m
+2026-03-09 20:52:55 [[35mhttp[39m]: [35m[0mPOST /api/auth/register [32m201[0m 222.898 ms - 600[0m[39m
+2026-03-09 20:52:59 [[31merror[39m]: [31mErrorId: 9664b77d-1eb5-40e9-80ff-7cf20b946aac | Status: 409 | Message: Email already registered[39m
+2026-03-09 20:52:59 [[35mhttp[39m]: [35m[0mPOST /api/auth/register [33m409[0m 2.564 ms - 402[0m[39m
+2026-03-09 20:53:22 [[35mhttp[39m]: [35m[0mPOST /api/auth/login [32m200[0m 218.266 ms - 592[0m[39m
+2026-03-09 20:53:32 [[35mhttp[39m]: [35m[0mGET /api/auth/me [32m200[0m 5.068 ms - 409[0m[39m
+2026-03-09 20:56:48 [[35mhttp[39m]: [35m[0mGET /api/auth/me [36m304[0m 3.853 ms - -[0m[39m
+2026-03-09 20:56:48 [[35mhttp[39m]: [35m[0mGET /api/auth/me [36m304[0m 3.969 ms - -[0m[39m
+2026-03-09 20:57:21 [[35mhttp[39m]: [35m[0mGET /api/auth/me [36m304[0m 3.861 ms - -[0m[39m
+2026-03-09 20:57:21 [[35mhttp[39m]: [35m[0mGET /api/auth/me [36m304[0m 3.070 ms - -[0m[39m
+2026-03-09 20:58:03 [[35mhttp[39m]: [35m[0mGET /api/auth/me [36m304[0m 2.806 ms - -[0m[39m
+2026-03-09 21:08:16 [[35mhttp[39m]: [35m[0mGET /api/auth/me [36m304[0m 2.559 ms - -[0m[39m
+2026-03-09 21:08:31 [[31merror[39m]: [31mErrorId: 33601d6b-ec26-4943-9e4f-11d00ddbf550 | Status: 401 | Message: Token expired[39m
+2026-03-09 21:08:31 [[35mhttp[39m]: [35m[0mPOST /api/auth/logout [33m401[0m 0.820 ms - -[0m[39m
+2026-03-09 21:08:39 [[35mhttp[39m]: [35m[0mPOST /api/auth/login [32m200[0m 220.997 ms - 592[0m[39m
+2026-03-09 21:09:08 [[35mhttp[39m]: [35m[0mGET /api/auth/me [36m304[0m 2.309 ms - -[0m[39m
+2026-03-09 21:09:12 [[35mhttp[39m]: [35m[0mPOST /api/auth/login [32m200[0m 222.064 ms - 592[0m[39m
+2026-03-09 21:10:30 [[35mhttp[39m]: [35m[0mGET /api/auth/me [36m304[0m 6.432 ms - -[0m[39m
+2026-03-09 21:10:31 [[35mhttp[39m]: [35m[0mGET /api/auth/me [36m304[0m 4.407 ms - -[0m[39m
+2026-03-09 21:11:32 [[31merror[39m]: [31mErrorId: 7aa47224-662a-45a0-a40e-b05aa10de359 | Status: 401 | Message: Access token required[39m
+2026-03-09 21:11:32 [[35mhttp[39m]: [35m[0mPOST /api/auth/logout [33m401[0m 1.027 ms - -[0m[39m

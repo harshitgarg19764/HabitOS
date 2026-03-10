@@ -2,11 +2,13 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, CheckCircle2, Sun, Moon } from 'lucide-react';
+import { Menu, X, CheckCircle2, Sun, Moon, LogOut, User, LayoutDashboard } from 'lucide-react';
 import { useStickyHeader } from '@/hooks/useStickyHeader';
 import { useTheme } from '@/hooks/useTheme';
+import { useAuth } from '@/contexts/AuthContext';
 
 const NAV_LINKS = [
     { name: 'Features', href: '#features' },
@@ -16,11 +18,25 @@ const NAV_LINKS = [
 
 export function Navbar() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [showProfile, setShowProfile] = useState(false);
     const isSticky = useStickyHeader(50);
     const pathname = usePathname();
     const { theme, toggleTheme, mounted } = useTheme();
+    const { user, isAuthenticated, logout } = useAuth();
+    const router = useRouter();
 
     const isLandingPage = pathname === '/';
+
+    const handleLogout = async () => {
+        await logout();
+        setShowProfile(false);
+        router.push('/');
+    };
+
+    const getInitials = (name) => {
+        if (!name) return '?';
+        return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+    };
 
     return (
         <header
@@ -91,18 +107,91 @@ export function Navbar() {
                             </motion.button>
                         )}
 
-                        <Link
-                            href="/login"
-                            className="text-sm font-medium hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-                        >
-                            Log in
-                        </Link>
-                        <Link
-                            href="/register"
-                            className="px-6 py-2.5 rounded-full btn-gradient text-sm font-semibold transition-transform hover:scale-105 active:scale-95 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40"
-                        >
-                            Get Started →
-                        </Link>
+                        {isAuthenticated ? (
+                            <div className="relative">
+                                <motion.button
+                                    onClick={() => setShowProfile(!showProfile)}
+                                    className="flex items-center gap-2 p-1.5 pr-3 rounded-full bg-muted/50 hover:bg-muted transition-colors"
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                >
+                                    <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                                        {user?.avatar ? (
+                                            <img src={user.avatar} alt={user.name} className="w-full h-full rounded-full object-cover" />
+                                        ) : (
+                                            <span className="text-xs font-medium text-primary">{getInitials(user?.name)}</span>
+                                        )}
+                                    </div>
+                                    <span className="text-sm font-medium hidden sm:block">{user?.name || 'User'}</span>
+                                </motion.button>
+
+                                <AnimatePresence>
+                                    {showProfile && (
+                                        <>
+                                            <motion.div
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                exit={{ opacity: 0 }}
+                                                className="fixed inset-0 z-40"
+                                                onClick={() => setShowProfile(false)}
+                                            />
+                                            <motion.div
+                                                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                transition={{ duration: 0.15 }}
+                                                className="absolute right-0 top-12 w-56 bg-background border border-border rounded-2xl shadow-xl overflow-hidden z-50"
+                                            >
+                                                <div className="p-4 border-b border-border">
+                                                    <p className="font-medium">{user?.name || 'User'}</p>
+                                                    <p className="text-xs text-muted-foreground">{user?.email || 'user@example.com'}</p>
+                                                </div>
+                                                <div className="p-2">
+                                                    <Link
+                                                        href="/dashboard"
+                                                        className="flex items-center gap-3 p-3 rounded-xl hover:bg-muted/30 transition-colors"
+                                                        onClick={() => setShowProfile(false)}
+                                                    >
+                                                        <LayoutDashboard className="w-4 h-4" />
+                                                        <span className="text-sm">Dashboard</span>
+                                                    </Link>
+                                                    <Link
+                                                        href="/settings"
+                                                        className="flex items-center gap-3 p-3 rounded-xl hover:bg-muted/30 transition-colors"
+                                                        onClick={() => setShowProfile(false)}
+                                                    >
+                                                        <User className="w-4 h-4" />
+                                                        <span className="text-sm">Profile</span>
+                                                    </Link>
+                                                    <button
+                                                        onClick={handleLogout}
+                                                        className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 transition-colors"
+                                                    >
+                                                        <LogOut className="w-4 h-4" />
+                                                        <span className="text-sm">Logout</span>
+                                                    </button>
+                                                </div>
+                                            </motion.div>
+                                        </>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-4">
+                                <Link
+                                    href="/login"
+                                    className="text-sm font-medium hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                                >
+                                    Log in
+                                </Link>
+                                <Link
+                                    href="/register"
+                                    className="px-6 py-2.5 rounded-full btn-gradient text-sm font-semibold transition-transform hover:scale-105 active:scale-95 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40"
+                                >
+                                    Get Started →
+                                </Link>
+                            </div>
+                        )}
                     </div>
                 </nav>
 
@@ -209,20 +298,40 @@ export function Navbar() {
                                     transition={{ duration: 0.3, delay: 0.3 }}
                                     className="flex flex-col gap-4 mt-4"
                                 >
-                                    <Link
-                                        href="/login"
-                                        className="w-full py-4 text-center rounded-2xl border border-border text-lg font-medium hover:bg-muted transition-colors"
-                                        onClick={() => setIsMobileMenuOpen(false)}
-                                    >
-                                        Log in
-                                    </Link>
-                                    <Link
-                                        href="/register"
-                                        className="w-full py-4 text-center rounded-2xl btn-gradient text-lg font-semibold shadow-lg shadow-indigo-500/25"
-                                        onClick={() => setIsMobileMenuOpen(false)}
-                                    >
-                                        Get Started Free →
-                                    </Link>
+                                    {isAuthenticated ? (
+                                        <>
+                                            <Link
+                                                href="/dashboard"
+                                                className="w-full py-4 text-center rounded-2xl btn-gradient text-lg font-semibold shadow-lg shadow-indigo-500/25"
+                                                onClick={() => setIsMobileMenuOpen(false)}
+                                            >
+                                                Dashboard
+                                            </Link>
+                                            <button
+                                                onClick={handleLogout}
+                                                className="w-full py-4 text-center rounded-2xl border border-red-200 dark:border-red-800 text-red-600 text-lg font-medium hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                                            >
+                                                Logout
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Link
+                                                href="/login"
+                                                className="w-full py-4 text-center rounded-2xl border border-border text-lg font-medium hover:bg-muted transition-colors"
+                                                onClick={() => setIsMobileMenuOpen(false)}
+                                            >
+                                                Log in
+                                            </Link>
+                                            <Link
+                                                href="/register"
+                                                className="w-full py-4 text-center rounded-2xl btn-gradient text-lg font-semibold shadow-lg shadow-indigo-500/25"
+                                                onClick={() => setIsMobileMenuOpen(false)}
+                                            >
+                                                Get Started Free →
+                                            </Link>
+                                        </>
+                                    )}
                                 </motion.div>
                             </nav>
                         </motion.div>

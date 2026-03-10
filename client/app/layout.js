@@ -4,6 +4,7 @@ import { ThemeProvider } from '../components/providers/ThemeProvider';
 import { NavbarWrapper } from '../components/layout/NavbarWrapper';
 import { ToastProvider } from '../components/ui/Toast';
 import { PageTransition } from '../components/animations/PageTransition';
+import { AuthProvider } from '../contexts/AuthContext';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -25,13 +26,15 @@ export default function RootLayout({ children }) {
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${outfit.variable} font-sans antialiased text-foreground bg-background transition-colors duration-300`}>
         <ThemeProvider>
-          <ToastProvider>
-            <NavbarWrapper>
-              <PageTransition>
-                {children}
-              </PageTransition>
-            </NavbarWrapper>
-          </ToastProvider>
+          <AuthProvider>
+            <ToastProvider>
+              <NavbarWrapper>
+                <PageTransition>
+                  {children}
+                </PageTransition>
+              </NavbarWrapper>
+            </ToastProvider>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

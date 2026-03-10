@@ -470,13 +470,13 @@ Habit_OS/
 ## 🔵 PHASE 13 – Backend: Project Setup, Architecture & Database
 
 ### 13.1 Server Initialization
-- [ ] Initialize Node.js + JavaScript project in `server/`
-- [ ] Install core: `express`, `mongoose`, `dotenv`, `cors`, `helmet`, `compression`, `morgan`
-- [ ] Install dev: ``, `nodemon`, ``, `typescript`, `jest`, `supertest`
-- [ ] Install validation: `zod`, `express-validator`, `xss-clean`, `express-mongo-sanitize`
-- [ ] Configure `jsconfig.json` (strict mode, paths, outDir: `dist/`)
-- [ ] `src/index.js` – server listen + graceful shutdown on `SIGTERM`
-- [ ] `src/app.js` – Express app factory (middleware + routes assembled here)
+- [x] Initialize Node.js + JavaScript project in `server/`
+- [x] Install core: `express`, `mongoose`, `dotenv`, `cors`, `helmet`, `compression`, `morgan`
+- [x] Install dev: `nodemon`, `eslint`, `jest`, `supertest`
+- [x] Install validation: `zod`, `express-validator`, `xss-clean`, `express-mongo-sanitize`
+- [x] Configure `jsconfig.json` (strict mode, paths, outDir: `dist/`)
+- [x] `src/index.js` – server listen + graceful shutdown on `SIGTERM`
+- [x] `src/app.js` – Express app factory (middleware + routes assembled here)
 
 ### 13.2 Backend Folder Structure
 ```
@@ -502,30 +502,30 @@ server/src/
 ```
 
 ### 13.3 Middleware Stack (in order)
-- [ ] `requestId` – attach `x-request-id` UUID to each request (for tracing)
-- [ ] `helmet()` – secure HTTP headers (CSP, HSTS, X-Frame-Options)
-- [ ] `cors()` – whitelist `CLIENT_URL` (dev + prod)
-- [ ] `compression()` – gzip all responses
-- [ ] `express-mongo-sanitize()` – strip `$` and `.` from inputs (NoSQL injection)
-- [ ] `xss-clean()` – sanitize HTML/script from string fields
-- [ ] `morgan` – HTTP logger (colorized in dev, JSON in prod)
-- [ ] `express.json({ limit: '10kb' })` – body size cap
-- [ ] `rateLimiter` – global 200 req / 15min window per IP
-- [ ] Global `errorHandler` middleware (catches all `next(err)` calls)
-- [ ] `notFound` catch-all (404 with `ApiError`)
+- [x] `requestId` – attach `x-request-id` UUID to each request (for tracing)
+- [x] `helmet()` – secure HTTP headers (CSP, HSTS, X-Frame-Options)
+- [x] `cors()` – whitelist `CLIENT_URL` (dev + prod)
+- [x] `compression()` – gzip all responses
+- [x] `express-mongo-sanitize()` – strip `$` and `.` from inputs (NoSQL injection)
+- [x] `xss-clean()` – sanitize HTML/script from string fields
+- [x] `morgan` – HTTP logger (colorized in dev, JSON in prod)
+- [x] `express.json({ limit: '10kb' })` – body size cap
+- [x] `rateLimiter` – global 200 req / 15min window per IP
+- [x] Global `errorHandler` middleware (catches all `next(err)` calls)
+- [x] `notFound` catch-all (404 with `ApiError`)
 
 ### 13.4 Utility Classes & Helpers
-- [ ] `ApiResponse` class – `{ success: true, data, message, pagination? }`
-- [ ] `ApiError` class – `statusCode`, `message`, `errors[]`, `isOperational`, `stack`
-- [ ] `asyncHandler(fn)` – wraps async controller, forwards errors to `next(err)`
-- [ ] `logger` – Winston with daily rotate file transport; levels: error/warn/info/http/debug
-- [ ] `paginate(model, query, options)` – returns `{ data, total, page, totalPages, hasNext }`
+- [x] `ApiResponse` class – `{ success: true, data, message, pagination? }`
+- [x] `ApiError` class – `statusCode`, `message`, `errors[]`, `isOperational`, `stack`
+- [x] `asyncHandler(fn)` – wraps async controller, forwards errors to `next(err)`
+- [x] `logger` – Winston with daily rotate file transport; levels: error/warn/info/http/debug
+- [x] `paginate(model, query, options)` – returns `{ data, total, page, totalPages, hasNext }`
 
 ### 13.5 Environment Validation (Zod)
-- [ ] Required: `MONGO_URI`, `JWT_SECRET`, `JWT_REFRESH_SECRET`, `PORT`, `CLIENT_URL`
-- [ ] Required: `OPENAI_API_KEY`, `SENDGRID_API_KEY`, `EMAIL_FROM`
-- [ ] Optional: `REDIS_URL` (for future caching), `LOG_LEVEL`, `AI_ENABLED`
-- [ ] Server crashes on startup with descriptive message if any required var missing
+- [x] Required: `MONGO_URI`, `JWT_SECRET`, `JWT_REFRESH_SECRET`, `PORT`, `CLIENT_URL`
+- [x] Required: `OPENAI_API_KEY`, `SENDGRID_API_KEY`, `EMAIL_FROM`
+- [x] Optional: `REDIS_URL` (for future caching), `LOG_LEVEL`, `AI_ENABLED`
+- [x] Server crashes on startup with descriptive message if any required var missing
 
 ### 13.6 MongoDB Schemas & Indexes
 
@@ -536,9 +536,9 @@ role ('user'|'admin'), isVerified, verificationToken?, passwordResetToken?,
 passwordResetExpires?, preferences: { theme, accentColor, weekStartDay },
 createdAt, updatedAt
 ```
-- [ ] Pre-save hook: bcrypt hash password (cost: 12) if modified
-- [ ] Instance method: `comparePassword(plain) → boolean`
-- [ ] Index: `email` (unique)
+- [x] Pre-save hook: bcrypt hash password (cost: 12) if modified
+- [x] Instance method: `comparePassword(plain) → boolean`
+- [x] Index: `email` (unique)
 
 #### `Habit`
 ```
@@ -548,8 +548,8 @@ tags[], archived (bool, default: false), order (number),
 frequency ('daily'|'weekly'|'custom'), frequencyDays? (0-6[]),
 createdAt, updatedAt
 ```
-- [ ] Index: `{ userId, archived }`, `{ userId, order }`
-- [ ] Validation: `name` max 100 chars, `color` valid hex regex
+- [x] Index: `{ userId, archived }`, `{ userId, order }`
+- [x] Validation: `name` max 100 chars, `color` valid hex regex
 
 #### `Log`
 ```
@@ -557,26 +557,26 @@ _id, userId (ref: User), habitId (ref: Habit),
 date (Date stored as UTC midnight), value (Mixed: bool|number),
 note (string, max 500 chars), createdAt, updatedAt
 ```
-- [ ] Compound unique index: `{ userId, habitId, date }` (one log per habit per day)
-- [ ] Index: `{ userId, date }` (dashboard), `{ habitId, date }` (analytics)
+- [x] Compound unique index: `{ userId, habitId, date }` (one log per habit per day)
+- [x] Index: `{ userId, date }` (dashboard), `{ habitId, date }` (analytics)
 
 #### `Mood`
 ```
 _id, userId, date, score (1-10), emoji, note (max 300 chars), createdAt
 ```
-- [ ] Compound unique index: `{ userId, date }`
+- [x] Compound unique index: `{ userId, date }`
 
 #### `Achievement`
 ```
 _id, userId, type (enum: badge key strings), earnedAt, metadata?
 ```
-- [ ] Compound unique index: `{ userId, type }`
+- [x] Compound unique index: `{ userId, type }`
 
 #### `RefreshToken`
 ```
 _id, userId, tokenHash (SHA-256), expiresAt, createdAt
 ```
-- [ ] TTL index on `expiresAt` (MongoDB auto-deletes expired docs)
+- [x] TTL index on `expiresAt` (MongoDB auto-deletes expired docs)
 
 #### `EmailSettings`
 ```
@@ -590,10 +590,10 @@ motivationalQuoteEnabled, missedHabitAlertEnabled, timezone, lastEmailSentAt
 _id, userId, type ('insight'|'quote'|'suggestion'|'summary'|'predict'),
 promptHash (MD5), response (string), expiresAt, createdAt
 ```
-- [ ] TTL index on `expiresAt` (24h auto-expiry)
+- [x] TTL index on `expiresAt` (24h auto-expiry)
 
 ### 13.7 Database Seed Script
-- [ ] `npm run seed` – populates dev DB with 1 test user + 8 habits + 90 days of logs
+- [x] `npm run seed` – populates dev DB with 1 test user + 8 habits + 90 days of logs
 
 ---
 
@@ -611,7 +611,7 @@ promptHash (MD5), response (string), expiresAt, createdAt
 - [ ] Add env vars: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
 
 #### Passport.js Google Strategy (`services/googleAuth.service.js`)
-- [ ] Install: `passport`, `passport-google-oauth20`, ``
+- [ ] Install: `passport`, `passport-google-oauth20`, `passport-local`
 - [ ] Initialize `passport.use(new GoogleStrategy({ clientID, clientSecret, callbackURL }, verify))`
 - [ ] **Verify callback logic**:
   1. Extract `profile.emails[0].value` (verified email from Google)
@@ -622,7 +622,7 @@ promptHash (MD5), response (string), expiresAt, createdAt
   6. Send welcome email for brand-new users
 
 #### Email Domain Validation (Optional Allowlist)
-- [ ] `ALLOWED_EMAIL_DOMAINS` env var (comma-separated, e.g., `gmail.com,company.com`, or `*` for all)
+- [x] `ALLOWED_EMAIL_DOMAINS` env var (comma-separated, e.g., `gmail.com,company.com`, or `*` for all)
 - [ ] If domain not in allowlist → reject with friendly error message
 - [ ] Reject disposable email domains (optional: use `disposable-email-domains` npm package)
 
@@ -636,92 +636,92 @@ promptHash (MD5), response (string), expiresAt, createdAt
 - [ ] `GET /api/auth/google/disconnect` – remove `googleId` from user (only if password exists as fallback)
 
 #### Updated User Schema (add OAuth fields)
-- [ ] Add `googleId` (string, optional, sparse unique index)
-- [ ] Add `authProvider` enum: `'local' | 'google' | 'both'`
-- [ ] `passwordHash` now optional (Google-only users have no password)
-- [ ] `isVerified: true` auto-set for all Google OAuth users
-- [ ] `avatar` auto-populated from Google profile photo
+- [x] Add `googleId` (string, optional, sparse unique index)
+- [x] Add `authProvider` enum: `'local' | 'google' | 'both'`
+- [x] `passwordHash` now optional (Google-only users have no password)
+- [x] `isVerified: true` auto-set for all Google OAuth users
+- [x] `avatar` auto-populated from Google profile photo
 
 ### 14.2 Standard Auth Endpoints
 
 #### `POST /api/auth/register`
-- [ ] Block if email already registered via Google OAuth (return 409 with "Use Google Sign-In")
-- [ ] Validate: name (3-50 chars), email (valid format), password (8+ chars, 1 uppercase, 1 number)
-- [ ] Check email uniqueness (return 409 if taken)
-- [ ] Hash password (`bcrypt`, cost 12)
-- [ ] Create `User` + `EmailSettings` documents atomically
-- [ ] Generate access token (JWT, 15min) + refresh token (JWT, 30d)
-- [ ] Store hashed refresh token in `RefreshToken` collection
+- [x] Block if email already registered via Google OAuth (return 409 with "Use Google Sign-In")
+- [x] Validate: name (3-50 chars), email (valid format), password (8+ chars, 1 uppercase, 1 number)
+- [x] Check email uniqueness (return 409 if taken)
+- [x] Hash password (`bcrypt`, cost 12)
+- [x] Create `User` + `EmailSettings` documents atomically
+- [x] Generate access token (JWT, 15min) + refresh token (JWT, 30d)
+- [x] Store hashed refresh token in `RefreshToken` collection
 - [ ] Send welcome email (async, non-blocking)
-- [ ] Return: `{ user, accessToken }` + set `refreshToken` httpOnly cookie
+- [x] Return: `{ user, accessToken }` + set `refreshToken` httpOnly cookie
 
 #### `POST /api/auth/login`
 - [ ] Rate limit: 10 attempts / 15min per IP + per email address (separate counters)
 - [ ] Account lockout: after 10 failed → lock 15min, return 423 with unlock time
-- [ ] If user has `authProvider: 'google'` and no password → return 400 "Please use Google Sign-In"
-- [ ] Find user, run `comparePassword()`, return 401 on mismatch (generic message)
-- [ ] Generate + store new token pair
-- [ ] Return: `{ user, accessToken }` + set cookie
+- [x] If user has `authProvider: 'google'` and no password → return 400 "Please use Google Sign-In"
+- [x] Find user, run `comparePassword()`, return 401 on mismatch (generic message)
+- [x] Generate + store new token pair
+- [x] Return: `{ user, accessToken }` + set cookie
 
 #### `POST /api/auth/refresh`
-- [ ] Read refresh token from httpOnly cookie
-- [ ] Hash it, find matching `RefreshToken` doc (check not expired)
-- [ ] Delete old token + generate new pair (token rotation)
-- [ ] Return new `accessToken` + set new cookie
+- [x] Read refresh token from httpOnly cookie
+- [x] Hash it, find matching `RefreshToken` doc (check not expired)
+- [x] Delete old token + generate new pair (token rotation)
+- [x] Return new `accessToken` + set new cookie
 
 #### `POST /api/auth/logout`
-- [ ] Delete `RefreshToken` document from DB
-- [ ] Clear `refreshToken` cookie
-- [ ] Return 200
+- [x] Delete `RefreshToken` document from DB
+- [x] Clear `refreshToken` cookie
+- [x] Return 200
 
 #### `GET /api/auth/me`
-- [ ] Requires `authenticate` middleware
-- [ ] Return user object (omit `passwordHash`, tokens)
-- [ ] Include `authProvider` so frontend knows to hide "Change Password" for Google users
+- [x] Requires `authenticate` middleware
+- [x] Return user object (omit `passwordHash`, tokens)
+- [x] Include `authProvider` so frontend knows to hide "Change Password" for Google users
 
 #### `PUT /api/auth/profile`
-- [ ] Update: name, avatar URL, timezone, preferences
-- [ ] Validate each field individually
+- [x] Update: name, avatar URL, timezone, preferences
+- [x] Validate each field individually
 
 #### `PUT /api/auth/change-password`
-- [ ] Block if `authProvider === 'google'` (no password to change)
-- [ ] Verify current password with `comparePassword()`
-- [ ] Validate new password strength
-- [ ] Hash + save new password, set `authProvider: 'both'`
-- [ ] Invalidate ALL existing refresh tokens for user
+- [x] Block if `authProvider === 'google'` (no password to change)
+- [x] Verify current password with `comparePassword()`
+- [x] Validate new password strength
+- [x] Hash + save new password, set `authProvider: 'both'`
+- [x] Invalidate ALL existing refresh tokens for user
 
 #### `POST /api/auth/forgot-password`
-- [ ] If email belongs to Google-only user → respond with "Please use Google Sign-In" (don't send reset email)
-- [ ] Otherwise: generate signed reset token, store hash + 1h expiry, send email
+- [x] If email belongs to Google-only user → respond with "Please use Google Sign-In" (don't send reset email)
+- [x] Otherwise: generate signed reset token, store hash + 1h expiry, send email
 
 #### `POST /api/auth/reset-password`
-- [ ] Verify token hash + expiry
-- [ ] Hash new password + save
-- [ ] Clear `passwordResetToken` + `passwordResetExpires`
-- [ ] Invalidate all refresh tokens
+- [x] Verify token hash + expiry
+- [x] Hash new password + save
+- [x] Clear `passwordResetToken` + `passwordResetExpires`
+- [x] Invalidate all refresh tokens
 
 ### 14.3 Auth Middleware
-- [ ] `authenticate` – verify access JWT, attach `req.user`, return 401 if invalid/expired
-- [ ] `optionalAuth` – attach user if token valid, silently skip if absent
-- [ ] `authorize(roles[])` – check `req.user.role`, return 403 if unauthorized
-- [ ] `rateLimiter(max, windowMs)` – configurable per-route rate limiter factory
+- [x] `authenticate` – verify access JWT, attach `req.user`, return 401 if invalid/expired
+- [x] `optionalAuth` – attach user if token valid, silently skip if absent
+- [x] `authorize(roles[])` – check `req.user.role`, return 403 if unauthorized
+- [x] `rateLimiter(max, windowMs)` – configurable per-route rate limiter factory
 
 ### 14.4 Security Hardening
-- [ ] Access token: **15 min** expiry (short-lived, refresh silently)
-- [ ] Refresh token: **30 days** expiry, httpOnly + secure + sameSite=strict cookie
-- [ ] Refresh token rotation: old invalidated on every use
-- [ ] HTTPS-only cookie in production (`secure: process.env.NODE_ENV === 'production'`)
-- [ ] Input sanitization applied globally before all routes
-- [ ] SQL/NoSQL injection prevention via `express-mongo-sanitize`
+- [x] Access token: **15 min** expiry (short-lived, refresh silently)
+- [x] Refresh token: **30 days** expiry, httpOnly + secure + sameSite=strict cookie
+- [x] Refresh token rotation: old invalidated on every use
+- [x] HTTPS-only cookie in production (`secure: process.env.NODE_ENV === 'production'`)
+- [x] Input sanitization applied globally before all routes
+- [x] SQL/NoSQL injection prevention via `express-mongo-sanitize`
 - [ ] CSRF protection for OAuth state parameter (`state` param in Google redirect)
 - [ ] Google ID token verification via `google-auth-library` for any future mobile/web token flows
 
 ### 14.5 Google OAuth Email Flow
 - [ ] Welcome email sent on first Google login (same template as email/password register)
-- [ ] Email confirmed as verified automatically (Google guarantees it)
-- [ ] Daily summary, streak reminders, and all automation emails work identically for OAuth users
-- [ ] `EmailSettings` auto-created with defaults on first Google sign-in
-- [ ] No "Email Verification" step required for Google users
+- [x] Email confirmed as verified automatically (Google guarantees it)
+- [x] Daily summary, streak reminders, and all automation emails work identically for OAuth users
+- [x] `EmailSettings` auto-created with defaults on first Google sign-in
+- [x] No "Email Verification" step required for Google users
 
 ---
 

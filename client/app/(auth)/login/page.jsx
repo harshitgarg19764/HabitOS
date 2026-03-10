@@ -9,9 +9,11 @@ import { AuthLayout } from '@/components/auth/AuthLayout';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
@@ -25,26 +27,24 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Mock validation
-      if (formData.email === 'test@habitos.com' && formData.password === 'password') {
-        router.push('/dashboard');
-      } else {
-        setError('Invalid email or password');
-      }
+      await login(formData.email, formData.password);
     } catch (err) {
-      setError('Something went wrong. Please try again.');
+      setError(err.message || 'Invalid email or password');
     } finally {
       setLoading(false);
     }
   };
 
   const handleGoogleLogin = () => {
-    // In production, redirect to Google OAuth
-    // router.push('/api/auth/google');
-    console.log('Google login clicked');
+    const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+    const redirectUri = `${window.location.origin}/api/auth/google/callback`;
+    
+    if (clientId) {
+      const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=openid%20email%20profile&prompt=select_account`;
+      window.location.href = googleAuthUrl;
+    } else {
+      console.log('Google OAuth not configured');
+    }
   };
 
   return (
