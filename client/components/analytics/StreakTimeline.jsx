@@ -1,29 +1,41 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
-const generateStreakData = () => {
+const generateStreakData = (serverData = {}) => {
   const weeks = 12;
   const data = [];
+  
+  const today = new Date();
+  today.setUTCHours(0, 0, 0, 0);
+  
+  // Start from 12 weeks ago (aligned to Monday)
+  const startDate = new Date(today);
+  startDate.setDate(startDate.getDate() - (weeks * 7 - 1));
+  
+  let currentDate = new Date(startDate);
   
   for (let week = 0; week < weeks; week++) {
     const weekData = [];
     for (let day = 0; day < 7; day++) {
-      const random = Math.random();
+      const dateStr = currentDate.toISOString().split('T')[0];
+      const count = serverData[dateStr] || 0;
+      
       let intensity = 0;
-      if (random > 0.3) intensity = 1;
-      if (random > 0.5) intensity = 2;
-      if (random > 0.7) intensity = 3;
-      if (random > 0.85) intensity = 4;
-      weekData.push({ day, intensity, week });
+      if (count > 0) intensity = 1;
+      if (count > 2) intensity = 2;
+      if (count > 4) intensity = 3;
+      if (count > 5) intensity = 4;
+      
+      weekData.push({ day, intensity, week, date: dateStr, count });
+      currentDate.setDate(currentDate.getDate() + 1);
     }
     data.push(weekData);
   }
   
   return data;
 };
-
-const streakData = generateStreakData();
 
 const intensityColors = [
   'bg-muted',
@@ -48,7 +60,27 @@ const cell = {
   show: { opacity: 1, scale: 1 },
 };
 
-export function StreakTimeline() {
+export function StreakTimeline({ data = {} }) {
+  const [streakData, setStreakData] = useState([]);
+
+  useEffect(() => {
+    setStreakData(generateStreakData(data));
+  }, [data]);
+
+  if (streakData.length === 0) {
+    return (
+      <div className="flex gap-1 animate-pulse ml-6">
+        {Array.from({ length: 12 }).map((_, i) => (
+          <div key={i} className="flex flex-col gap-1">
+            {Array.from({ length: 7 }).map((_, j) => (
+              <div key={j} className="w-6 h-6 rounded-md bg-muted" />
+            ))}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="flex gap-1 mb-2 ml-6">

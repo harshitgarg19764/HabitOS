@@ -10,6 +10,8 @@ import { InsightSkeleton } from '@/components/insights/InsightSkeleton';
 import { QuoteCard } from '@/components/insights/QuoteCard';
 import { SuggestionChips } from '@/components/insights/SuggestionChips';
 import { WeeklyNarrative } from '@/components/insights/WeeklyNarrative';
+import { aiAPI } from '@/lib/api';
+import { useEffect } from 'react';
 
 const mockInsights = [
   {
@@ -67,19 +69,45 @@ export default function InsightsPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [currentQuote, setCurrentQuote] = useState(0);
   const [isNarrativeExpanded, setIsNarrativeExpanded] = useState(false);
+  const [insightsList, setInsightsList] = useState([]);
+  const [suggestionsList, setSuggestionsList] = useState([]);
+  const [weeklySummary, setWeeklySummary] = useState('');
+  const [quotes, setQuotes] = useState([
+    { text: 'We are what we repeatedly do. Excellence, then, is not an act, but a habit.', author: 'Aristotle' }
+  ]);
 
-  const quotes = [
-    { text: 'We are what we repeatedly do. Excellence, then, is not an act, but a habit.', author: 'Aristotle' },
-    { text: 'The secret of your future is hidden in your daily routine.', author: 'Mike Murdock' },
-    { text: 'Success is the sum of small efforts, repeated day in and day out.', author: 'Robert Collier' },
-  ];
+  useEffect(() => {
+    async function initAI() {
+      setIsLoading(true);
+      try {
+        const [insightsRes, quoteRes, suggestionsRes, summaryRes] = await Promise.all([
+          aiAPI.getInsights(),
+          aiAPI.getQuote({ moodScore: 7 }),
+          aiAPI.getSuggestions(),
+          aiAPI.getSummary()
+        ]);
+        
+        if (insightsRes.data) setInsightsList(insightsRes.data);
+        if (quoteRes.data) setQuotes([{ text: quoteRes.data.quote, author: quoteRes.data.author }]);
+        if (suggestionsRes.data) setSuggestionsList(suggestionsRes.data);
+        if (summaryRes.data?.summary) setWeeklySummary(summaryRes.data.summary);
+      } catch (err) {
+        console.warn(err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    initAI();
+  }, []);
 
-  const handleRefresh = () => {
+  const handleRefresh = async () => {
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      setCurrentQuote((prev) => (prev + 1) % quotes.length);
-    }, 1500);
+    try {
+      const quoteRes = await aiAPI.getQuote({ moodScore: Math.floor(Math.random() * 10) });
+      if (quoteRes.data) setQuotes([{ text: quoteRes.data.quote, author: quoteRes.data.author }]);
+      setCurrentQuote(0);
+    } catch(err) {}
+    setIsLoading(false);
   };
 
   return (
@@ -150,6 +178,7 @@ export default function InsightsPage() {
         {/* Weekly Narrative */}
         <motion.div variants={item}>
           <WeeklyNarrative
+            text={weeklySummary}
             expanded={isNarrativeExpanded}
             onToggle={() => setIsNarrativeExpanded(!isNarrativeExpanded)}
           />
@@ -166,10 +195,14 @@ export default function InsightsPage() {
               <InsightSkeleton />
               <InsightSkeleton />
             </div>
+          ) : insightsList.length === 0 ? (
+            <div className="py-10 text-center text-muted-foreground bg-muted/20 rounded-2xl border border-dashed">
+              No insights available yet. Track more habits to unlock intelligence!
+            </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {mockInsights.map((insight) => (
-                <InsightCard key={insight.id} insight={insight} />
+              {insightsList.map((insight, idx) => (
+                <InsightCard key={insight.id || idx} insight={insight} />
               ))}
             </div>
           )}
@@ -181,7 +214,7 @@ export default function InsightsPage() {
             <Lightbulb className="w-5 h-5 text-primary" />
             Suggestions
           </h3>
-          <SuggestionChips suggestions={suggestions} />
+          <SuggestionChips suggestions={suggestionsList} />
         </motion.div>
       </motion.div>
     </DashboardLayout>

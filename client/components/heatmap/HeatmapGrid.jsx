@@ -29,7 +29,7 @@ const colorThemes = {
   },
 };
 
-function generateHeatmapData(year, habit) {
+function generateHeatmapData(year, habit, serverData = {}) {
   const data = [];
   const startDate = new Date(year, 0, 1);
   const endDate = new Date(year, 11, 31);
@@ -46,24 +46,18 @@ function generateHeatmapData(year, habit) {
       if (currentDate < startDate || currentDate > endDate) {
         week.push(null);
       } else {
-        const random = Math.random();
+        const dateStr = new Date(currentDate).toISOString().split('T')[0];
+        const count = serverData[dateStr] || 0;
         let intensity = 0;
-        if (habit !== 'all') {
-          if (random > 0.4) intensity = 1;
-          if (random > 0.6) intensity = 2;
-          if (random > 0.75) intensity = 3;
-          if (random > 0.9) intensity = 4;
-        } else {
-          if (random > 0.3) intensity = 1;
-          if (random > 0.5) intensity = 2;
-          if (random > 0.7) intensity = 3;
-          if (random > 0.85) intensity = 4;
-        }
+        if (count > 0) intensity = 1;
+        if (count > 2) intensity = 2;
+        if (count > 4) intensity = 3;
+        if (count > 6) intensity = 4;
 
         week.push({
           date: new Date(currentDate),
           intensity,
-          completions: intensity * Math.floor(Math.random() * 5 + 1),
+          completions: count,
           habit,
         });
       }
@@ -103,11 +97,11 @@ function Tooltip({ data, position }) {
   );
 }
 
-export function HeatmapGrid({ year, habit, colorTheme, onCellClick }) {
+export function HeatmapGrid({ year, habit, colorTheme, onCellClick, serverData = {} }) {
   const [hoveredCell, setHoveredCell] = useState(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
 
-  const heatmapData = useMemo(() => generateHeatmapData(year, habit), [year, habit]);
+  const heatmapData = useMemo(() => generateHeatmapData(year, habit, serverData), [year, habit, serverData]);
   const theme = colorThemes[colorTheme] || colorThemes.default;
 
   const handleMouseEnter = (e, cellData) => {

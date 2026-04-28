@@ -2,16 +2,29 @@ import jwt from 'jsonwebtoken';
 import { User } from '#models/User.js';
 import { ApiError } from '#utils/ApiError.js';
 import { env } from '#config/env.js';
+import * as authService from '#services/auth.service.js';
 
 export const authenticate = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
+    let token = authHeader?.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      throw new ApiError({ statusCode: 401, message: 'Access token required' });
+    // Fallback to refresh token in cookies if access token is missing
+    if (!token && req.cookies?.refreshToken) {
+      const tokens = await authService.rotateTokens(req.cookies.refreshToken);
+      token = tokens.accessToken;
+      // Refresh the cookie for the user
+      res.cookie('refreshToken', tokens.refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
     }
 
-    const token = authHeader.split(' ')[1];
+    if (!token) {
+      throw new ApiError({ statusCode: 401, message: 'Access token required' });
+    }
 
     const decoded = jwt.verify(token, env.JWT_SECRET);
 

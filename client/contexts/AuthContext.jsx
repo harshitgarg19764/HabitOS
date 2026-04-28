@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { authAPI } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 
@@ -49,12 +49,12 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await authAPI.login({ email, password });
       
-      const token = response.data.data?.accessToken;
+      const token = response.data?.accessToken;
       if (token) {
         localStorage.setItem('accessToken', token);
       }
       
-      setUser(response.data.data.user);
+      setUser(response.data.user);
       router.push('/dashboard');
       
       return response.data;
@@ -70,12 +70,12 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await authAPI.register({ name, email, password });
       
-      const token = response.data.data?.accessToken;
+      const token = response.data?.accessToken;
       if (token) {
         localStorage.setItem('accessToken', token);
       }
       
-      setUser(response.data.data.user);
+      setUser(response.data.user);
       router.push('/dashboard');
       
       return response.data;
@@ -113,7 +113,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const value = {
+  const value = useMemo(() => ({
     user,
     loading,
     error,
@@ -123,7 +123,7 @@ export const AuthProvider = ({ children }) => {
     updateUser,
     refreshUser,
     isAuthenticated: !!user,
-  };
+  }), [user, loading, error, router]);
 
   return (
     <AuthContext.Provider value={value}>

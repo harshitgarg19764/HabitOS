@@ -1,21 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Plus, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { HabitCard } from '@/components/habits/HabitCard';
 import { CreateHabitModal } from '@/components/habits/CreateHabitModal';
-
-const mockHabits = [
-  { id: 'h1', name: 'Morning Meditation', icon: '🧘', color: '#8b5cf6', type: 'boolean', streak: 12, completed: false },
-  { id: 'h2', name: 'Drink Water (2L)', icon: '💧', color: '#3b82f6', type: 'numeric', goal: 2000, unit: 'ml', streak: 45, completed: true },
-  { id: 'h3', name: 'Read 20 pages', icon: '📚', color: '#10b981', type: 'boolean', streak: 3, completed: false },
-  { id: 'h4', name: 'Gym Session', icon: '🏋️', color: '#ef4444', type: 'boolean', streak: 0, completed: false },
-  { id: 'h5', name: 'Journaling', icon: '✍️', color: '#f59e0b', type: 'boolean', streak: 8, completed: true },
-  { id: 'h6', name: 'No Sugar', icon: '🚫', color: '#ec4899', type: 'boolean', streak: 21, completed: true },
-];
+import { habitsAPI } from '@/lib/api';
+import { useToast } from '@/components/ui/Toast';
 
 const container = {
   hidden: { opacity: 0 },
@@ -31,18 +24,44 @@ const item = {
 };
 
 export default function HabitsPage() {
-  const [habits, setHabits] = useState(mockHabits);
+  const [habits, setHabits] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingHabit, setEditingHabit] = useState(null);
 
-  const handleCreateHabit = (habitData) => {
-    const newHabit = {
-      id: `h${Date.now()}`,
-      ...habitData,
-      streak: 0,
-      completed: false,
-    };
-    setHabits([...habits, newHabit]);
+  const { success, error } = useToast();
+
+  useEffect(() => {
+    fetchHabits();
+  }, []);
+
+  const fetchHabits = async () => {
+    setIsLoading(true);
+    try {
+      const response = await habitsAPI.getAll();
+      setHabits(response.data || []);
+    } catch (err) {
+      console.error('Failed to load habits', err);
+      error('Failed to load habits. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCreateHabit = async (habitData) => {
+    try {
+      if (editingHabit) {
+        await habitsAPI.update(editingHabit._id || editingHabit.id, habitData);
+        success('Habit updated successfully!');
+      } else {
+        await habitsAPI.create(habitData);
+        success('New habit created!');
+      }
+      fetchHabits();
+    } catch (err) {
+      console.error('Failed to save habit', err);
+      error('Failed to save habit.');
+    }
   };
 
   const handleEditHabit = (habit) => {
@@ -50,15 +69,39 @@ export default function HabitsPage() {
     setIsModalOpen(true);
   };
 
-  const handleArchiveHabit = (habit) => {
-    setHabits(habits.filter(h => h.id !== habit.id));
-  };
-
-  const handleDeleteHabit = (habit) => {
-    if (confirm(`Are you sure you want to delete "${habit.name}"?`)) {
-      setHabits(habits.filter(h => h.id !== habit.id));
+  const handleArchiveHabit = async (habit) => {
+    try {
+      await habitsAPI.archive(habit._id || habit.id);
+      success(`${habit.name} archived.`);
+      fetchHabits();
+    } catch (err) {
+      console.error('Failed to archive habit', err);
+      error('Failed to archive habit.');
     }
   };
+
+  const handleDeleteHabit = async (habit) => {
+    if (confirm(`Are you sure you want to delete "${habit.name}"?`)) {
+      try {
+        await habitsAPI.delete(habit._id || habit.id);
+        success('Habit deleted.');
+        fetchHabits();
+      } catch (err) {
+        console.error('Failed to delete habit', err);
+        error('Failed to delete habit.');
+      }
+    }
+  };
+
+  if (isLoading && habits.length === 0) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center py-20 text-muted-foreground">
+          Loading your habits...
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
@@ -73,7 +116,7 @@ export default function HabitsPage() {
           <div>
             <h1 className="text-3xl font-heading font-bold">My Habits</h1>
             <p className="text-muted-foreground mt-1">
-              {habits.length} habits · {habits.filter(h => h.completed).length} completed today
+              {habits.length} active habits
             </p>
           </div>
           <Button
@@ -122,7 +165,7 @@ export default function HabitsPage() {
         >
           {habits.map((habit, index) => (
             <HabitCard
-              key={habit.id}
+              key={habit._id || habit.id}
               habit={habit}
               index={index}
               onEdit={handleEditHabit}

@@ -21,8 +21,18 @@ const brandElements = [
 
 export function AuthLayout({ children }) {
   const [quoteIndex, setQuoteIndex] = useState(0);
+  const [particles, setParticles] = useState([]);
 
   useEffect(() => {
+    const newParticles = [...Array(15)].map((_, i) => ({
+      id: i,
+      x: `${Math.random() * 100}%`,
+      y: `${Math.random() * 100}%`,
+      duration: Math.random() * 10 + 10,
+      targetY: `${Math.random() * 100}%`,
+    }));
+    setParticles(newParticles);
+    
     const interval = setInterval(() => {
       setQuoteIndex((prev) => (prev + 1) % quotes.length);
     }, 5000);
@@ -60,20 +70,20 @@ export function AuthLayout({ children }) {
 
         {/* Floating Particles */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[...Array(15)].map((_, i) => (
+          {particles.map((p) => (
             <motion.div
-              key={i}
+              key={p.id}
               className="absolute w-2 h-2 bg-white/30 rounded-full"
               initial={{
-                x: `${Math.random() * 100}%`,
-                y: `${Math.random() * 100}%`,
+                x: p.x,
+                y: p.y,
               }}
               animate={{
-                y: [null, `${Math.random() * 100}%`],
+                y: [null, p.targetY],
                 opacity: [0.3, 0.6, 0.3],
               }}
               transition={{
-                duration: Math.random() * 10 + 10,
+                duration: p.duration,
                 repeat: Infinity,
                 ease: 'linear',
               }}

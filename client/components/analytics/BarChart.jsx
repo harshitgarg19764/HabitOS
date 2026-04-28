@@ -12,19 +12,19 @@ import {
   Cell,
 } from 'recharts';
 
-const data = [
-  { day: 'Mon', rate: 80 },
-  { day: 'Tue', rate: 60 },
-  { day: 'Wed', rate: 100 },
-  { day: 'Thu', rate: 80 },
-  { day: 'Fri', rate: 40 },
-  { day: 'Sat', rate: 100 },
-  { day: 'Sun', rate: 80 },
-];
-
 const colors = ['#6366f1', '#8b5cf6', '#a855f7', '#d946ef', '#ec4899', '#f43f5e', '#f97316'];
 
-export function BarChart() {
+export function BarChart({ data = [] }) {
+  const chartData = data.length > 0 ? data.map(d => ({ ...d, rate: d.completions * 20 })) : [
+    { day: 'Mon', completions: 0 },
+    { day: 'Tue', completions: 0 },
+    { day: 'Wed', completions: 0 },
+    { day: 'Thu', completions: 0 },
+    { day: 'Fri', completions: 0 },
+    { day: 'Sat', completions: 0 },
+    { day: 'Sun', completions: 0 },
+  ];
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -33,7 +33,7 @@ export function BarChart() {
       className="h-[280px]"
     >
       <ResponsiveContainer width="100%" height="100%">
-        <RechartsBarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+        <RechartsBarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
           <XAxis
             dataKey="day"
@@ -43,7 +43,6 @@ export function BarChart() {
           <YAxis
             tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
             axisLine={{ stroke: 'hsl(var(--border))' }}
-            unit="%"
           />
           <Tooltip
             contentStyle={{
@@ -54,12 +53,12 @@ export function BarChart() {
             cursor={{ fill: 'hsl(var(--muted))' }}
           />
           <Bar
-            dataKey="rate"
+            dataKey="completions"
             radius={[6, 6, 0, 0]}
             animationDuration={1500}
             animationEasing="ease-out"
           >
-            {data.map((entry, index) => (
+            {chartData.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
             ))}
           </Bar>

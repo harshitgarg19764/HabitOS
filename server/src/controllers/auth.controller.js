@@ -24,6 +24,14 @@ export const register = asyncHandler(async (req, res) => {
     ));
 });
 
+export const googleCallback = asyncHandler(async (req, res) => {
+  const result = await authService.generateTokenPair(req.user._id);
+  
+  res
+    .cookie('refreshToken', result.refreshToken, cookieOptions)
+    .redirect(`${process.env.CLIENT_URL || 'http://localhost:3000'}/dashboard?token=${result.accessToken}`);
+});
+
 export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
@@ -48,7 +56,7 @@ export const refresh = asyncHandler(async (req, res) => {
     ));
   }
 
-  const tokens = await authService.rotateTokens(req.userId, refreshToken);
+  const tokens = await authService.rotateTokens(refreshToken);
 
   res
     .cookie('refreshToken', tokens.refreshToken, cookieOptions)

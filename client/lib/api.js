@@ -27,23 +27,19 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const refreshToken = localStorage.getItem('refreshToken');
-        if (refreshToken) {
-          const response = await axios.post(
-            `${API_URL}/auth/refresh`,
-            { refreshToken },
-            { withCredentials: true }
-          );
+        const response = await axios.post(
+          `${API_URL}/auth/refresh`,
+          {}, // No body needed, uses HttpOnly cookie
+          { withCredentials: true }
+        );
 
-          const { accessToken } = response.data.data;
-          localStorage.setItem('accessToken', accessToken);
+        const { accessToken } = response.data.data;
+        localStorage.setItem('accessToken', accessToken);
 
-          originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-          return api(originalRequest);
-        }
+        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+        return api(originalRequest);
       } catch (refreshError) {
         localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
         window.location.href = '/login';
         return Promise.reject(refreshError);
       }

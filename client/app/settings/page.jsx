@@ -1,9 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Settings, User, Bell, Palette, Shield, Globe, Moon, Sun, Check, Loader2, Camera } from 'lucide-react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
+import { authAPI, settingsAPI } from '@/lib/api';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/components/ui/Toast';
 
 const sections = [
   { id: 'profile', label: 'Profile', icon: User },
@@ -59,7 +62,7 @@ export function AnimatedToggle({ checked, onChange, disabled }) {
         initial={false}
         animate={{
           x: checked ? 24 : 4,
-          backgroundColor: checked ? '#ffffff' : '#a1a1aa',
+          backgroundColor: '#ffffff',
         }}
         transition={{ type: 'spring', stiffness: 500, damping: 30 }}
         className="absolute top-1 w-6 h-6 rounded-full shadow-md"
@@ -78,11 +81,13 @@ export function AvatarUpload({ src, onChange }) {
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => document.getElementById('avatar-input')?.click()}
     >
-      <img
-        src={src || '/default-avatar.png'}
-        alt="Avatar"
-        className="w-full h-full object-cover"
-      />
+      <div className="w-full h-full bg-muted flex items-center justify-center">
+        {src ? (
+          <img src={src} alt="Avatar" className="w-full h-full object-cover" />
+        ) : (
+          <User className="w-12 h-12 text-muted-foreground" />
+        )}
+      </div>
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: isHovered ? 1 : 0 }}
@@ -134,8 +139,8 @@ export function SaveButton({ saving, saved, onClick }) {
   return (
     <motion.button
       onClick={onClick}
-      disabled={saving || saved}
-      className="px-6 py-2.5 bg-primary text-primary-foreground rounded-xl font-medium flex items-center gap-2"
+      disabled={saving}
+      className="px-6 py-2.5 bg-primary text-primary-foreground rounded-xl font-medium flex items-center gap-2 disabled:opacity-50"
       whileTap={{ scale: 0.96 }}
     >
       {saving ? (
@@ -156,16 +161,28 @@ export function SaveButton({ saving, saved, onClick }) {
 }
 
 export default function SettingsPage() {
+  const { user, login } = useAuth();
   const [activeSection, setActiveSection] = useState('profile');
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
   const [profile, setProfile] = useState({
-    name: 'Harshit',
-    email: 'harshit@example.com',
-    timezone: 'America/New_York',
+    name: '',
+    email: '',
+    timezone: 'UTC',
     avatar: null,
   });
+
+  useEffect(() => {
+    if (user) {
+      setProfile({
+        name: user.name || '',
+        email: user.email || '',
+        timezone: user.timezone || 'UTC',
+        avatar: user.avatar || null,
+      });
+    }
+  }, [user]);
 
   const [notifications, setNotifications] = useState({
     dailySummary: true,
@@ -184,13 +201,68 @@ export default function SettingsPage() {
 
   const [language, setLanguage] = useState('en');
 
-  const handleSave = () => {
+  const { success, error } = useToast();
+
+  useEffect(() => {
+    async function fetchSettings() {
+      try {
+        const response = await settingsAPI.getEmail();
+        if (response.data) {
+          setNotifications({
+            dailySummary: response.data.dailySummaryEnabled,
+            weeklyReport: response.data.weeklyReportEnabled,
+            streakReminder: response.data.streakReminderEnabled,
+            achievementAlerts: true, // Backend logic for this can be added later
+            emailNotifications: response.data.enabled,
+            pushNotifications: false,
+          });
+        }
+      } catch (err) {
+        console.error('Failed to fetch settings', err);
+      }
+    }
+    fetchSettings();
+  }, []);
+
+  const handleSaveProfile = async () => {
     setSaving(true);
-    setTimeout(() => {
+    try {
+      const response = await authAPI.updateProfile(profile);
+      if (response.success) {
+        setSaved(true);
+        success('Profile updated successfully!');
+        setTimeout(() => setSaved(false), 2000);
+      }
+    } catch (err) {
+      console.error('Failed to update profile', err);
+      error('Failed to update profile.');
+    } finally {
       setSaving(false);
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2000);
-    }, 1500);
+    }
+  };
+
+  const handleSaveNotifications = async (newNotifications) => {
+    setSaving(true);
+    try {
+      const updates = {
+        dailySummaryEnabled: newNotifications.dailySummary,
+        weeklyReportEnabled: newNotifications.weeklyReport,
+        streakReminderEnabled: newNotifications.streakReminder,
+        enabled: newNotifications.emailNotifications,
+      };
+      const response = await settingsAPI.updateEmail(updates);
+      if (response.success) {
+        setNotifications(newNotifications);
+        setSaved(true);
+        success('Preferences saved!');
+        setTimeout(() => setSaved(false), 2000);
+      }
+    } catch (err) {
+      console.error('Failed to update notifications', err);
+      error('Failed to save preferences.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -201,7 +273,6 @@ export default function SettingsPage() {
         animate="show"
         className="space-y-6"
       >
-        {/* Header */}
         <motion.div variants={item}>
           <h1 className="text-3xl font-heading font-bold flex items-center gap-3">
             <Settings className="w-8 h-8 text-primary" />
@@ -212,41 +283,35 @@ export default function SettingsPage() {
           </p>
         </motion.div>
 
-        <div className="flex gap-6">
-          {/* Section Navigation */}
-          <motion.div variants={item} className="w-64 shrink-0">
+        <div className="flex flex-col md:flex-row gap-6">
+          <motion.div variants={item} className="w-full md:w-64 shrink-0">
             <div className="bg-card border rounded-2xl p-2 sticky top-24">
-              <div className="relative">
-                {sections.map((section) => {
-                  const Icon = section.icon;
-                  const isActive = activeSection === section.id;
-                  return (
-                    <button
-                      key={section.id}
-                      onClick={() => setActiveSection(section.id)}
-                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors relative ${
-                        isActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
-                      }`}
-                    >
-                      {isActive && (
-                        <motion.div
-                          layoutId="activeSection"
-                          className="absolute inset-0 bg-primary/10 rounded-xl"
-                          transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-                        />
-                      )}
-                      <Icon className="w-5 h-5 relative z-10" />
-                      <span className="relative z-10 font-medium">{section.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
+              {sections.map((section) => {
+                const Icon = section.icon;
+                const isActive = activeSection === section.id;
+                return (
+                  <button
+                    key={section.id}
+                    onClick={() => setActiveSection(section.id)}
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors relative ${
+                      isActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    {isActive && (
+                      <motion.div
+                        layoutId="activeSection"
+                        className="absolute inset-0 bg-primary/10 rounded-xl"
+                      />
+                    )}
+                    <Icon className="w-5 h-5 relative z-10" />
+                    <span className="relative z-10 font-medium">{section.label}</span>
+                  </button>
+                );
+              })}
             </div>
           </motion.div>
 
-          {/* Content */}
           <motion.div variants={item} className="flex-1 space-y-6">
-            {/* Profile Section */}
             {activeSection === 'profile' && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
@@ -258,11 +323,14 @@ export default function SettingsPage() {
                 <div className="flex items-center gap-6">
                   <AvatarUpload
                     src={profile.avatar}
-                    onChange={(e) => setProfile({ ...profile, avatar: URL.createObjectURL(e.target.files[0]) })}
+                    onChange={(e) => {
+                      // Avatar upload logic would go here
+                      console.log('Avatar changed');
+                    }}
                   />
                   <div className="space-y-1">
                     <p className="font-medium">Profile Photo</p>
-                    <p className="text-sm text-muted-foreground">Click to upload a new photo</p>
+                    <p className="text-sm text-muted-foreground">Personalize your account</p>
                   </div>
                 </div>
 
@@ -281,233 +349,66 @@ export default function SettingsPage() {
                     <input
                       type="email"
                       value={profile.email}
-                      onChange={(e) => setProfile({ ...profile, email: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-background border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                      disabled
+                      className="w-full px-4 py-2.5 bg-muted border rounded-xl cursor-not-allowed opacity-70"
                     />
-                  </div>
-                  <div className="space-y-2 md:col-span-2">
-                    <label className="text-sm font-medium">Timezone</label>
-                    <select
-                      value={profile.timezone}
-                      onChange={(e) => setProfile({ ...profile, timezone: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-background border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                    >
-                      <option value="America/New_York">Eastern Time (ET)</option>
-                      <option value="America/Chicago">Central Time (CT)</option>
-                      <option value="America/Denver">Mountain Time (MT)</option>
-                      <option value="America/Los_Angeles">Pacific Time (PT)</option>
-                      <option value="Europe/London">London (GMT)</option>
-                      <option value="Asia/Tokyo">Tokyo (JST)</option>
-                    </select>
                   </div>
                 </div>
 
                 <div className="flex justify-end">
-                  <SaveButton saving={saving} saved={saved} onClick={handleSave} />
+                  <SaveButton saving={saving} saved={saved} onClick={handleSaveProfile} />
                 </div>
               </motion.div>
             )}
 
-            {/* Notifications Section */}
             {activeSection === 'notifications' && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-card border rounded-2xl p-6 space-y-6"
-              >
-                <h3 className="font-semibold text-lg">Notification Preferences</h3>
-                
-                <div className="space-y-4">
-                  {[
-                    { key: 'dailySummary', label: 'Daily Summary', desc: 'Get a summary of your habits each morning' },
-                    { key: 'weeklyReport', label: 'Weekly Report', desc: 'Receive a detailed weekly performance report' },
-                    { key: 'streakReminder', label: 'Streak Reminders', desc: 'Get notified when your streak is at risk' },
-                    { key: 'achievementAlerts', label: 'Achievement Alerts', desc: 'Be notified when you unlock new badges' },
-                    { key: 'emailNotifications', label: 'Email Notifications', desc: 'Receive notifications via email' },
-                    { key: 'pushNotifications', label: 'Push Notifications', desc: 'Receive push notifications on your device' },
-                  ].map((item) => (
-                    <div key={item.key} className="flex items-center justify-between py-3 border-b last:border-0">
-                      <div>
-                        <p className="font-medium">{item.label}</p>
-                        <p className="text-sm text-muted-foreground">{item.desc}</p>
-                      </div>
-                      <AnimatedToggle
-                        checked={notifications[item.key]}
-                        onChange={(v) => setNotifications({ ...notifications, [item.key]: v })}
+              <div className="bg-card border rounded-2xl p-6 space-y-6">
+                 <h3 className="font-semibold text-lg">Notification Preferences</h3>
+                 <div className="space-y-4">
+                  {Object.entries(notifications).map(([key, val]) => (
+                    <div key={key} className="flex items-center justify-between py-3 border-b last:border-0 capitalize">
+                      <span>{key.replace(/([A-Z])/g, ' $1')}</span>
+                      <AnimatedToggle 
+                        checked={val} 
+                        onChange={(v) => setNotifications({...notifications, [key]: v})} 
                       />
                     </div>
                   ))}
-                </div>
-
-                <div className="flex justify-end">
-                  <SaveButton saving={saving} saved={saved} onClick={handleSave} />
-                </div>
-              </motion.div>
+                 </div>
+                 <div className="flex justify-end pt-4">
+                   <SaveButton saving={saving} saved={saved} onClick={() => handleSaveNotifications(notifications)} />
+                 </div>
+              </div>
             )}
 
-            {/* Appearance Section */}
             {activeSection === 'appearance' && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-card border rounded-2xl p-6 space-y-6"
-              >
-                <h3 className="font-semibold text-lg">Appearance</h3>
-                
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Theme</label>
-                    <div className="flex gap-3">
-                      {[
-                        { key: 'light', icon: Sun, label: 'Light' },
-                        { key: 'dark', icon: Moon, label: 'Dark' },
-                        { key: 'system', icon: Settings, label: 'System' },
-                      ].map((theme) => {
-                        const Icon = theme.icon;
-                        return (
-                          <button
-                            key={theme.key}
-                            onClick={() => setAppearance({ ...appearance, theme: theme.key })}
-                            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border transition-all ${
-                              appearance.theme === theme.key
-                                ? 'bg-primary text-primary-foreground border-primary'
-                                : 'hover:bg-muted'
-                            }`}
-                          >
-                            <Icon className="w-5 h-5" />
-                            {theme.label}
-                          </button>
-                        );
-                      })}
-                    </div>
+              <div className="bg-card border rounded-2xl p-6 space-y-6">
+                 <h3 className="font-semibold text-lg">Appearance</h3>
+                 <div className="space-y-4">
+                  <label className="text-sm font-medium">Theme</label>
+                  <div className="flex gap-4">
+                     {['light', 'dark', 'system'].map(t => (
+                       <button 
+                         key={t}
+                         className={cn("px-4 py-2 rounded-lg border capitalize", appearance.theme === t ? "bg-primary text-white" : "bg-muted")}
+                         onClick={() => setAppearance({...appearance, theme: t})}
+                       >
+                         {t}
+                       </button>
+                     ))}
                   </div>
-
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Accent Color</label>
-                    <ColorPicker
-                      colors={accentColors}
-                      selected={appearance.accentColor}
-                      onChange={(c) => setAppearance({ ...appearance, accentColor: c })}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Week Starts On</label>
-                    <div className="flex gap-3">
-                      {[
-                        { key: 'sunday', label: 'Sunday' },
-                        { key: 'monday', label: 'Monday' },
-                      ].map((day) => (
-                        <button
-                          key={day.key}
-                          onClick={() => setAppearance({ ...appearance, weekStartDay: day.key })}
-                          className={`flex-1 py-2.5 rounded-xl border transition-all ${
-                            appearance.weekStartDay === day.key
-                              ? 'bg-primary text-primary-foreground border-primary'
-                              : 'hover:bg-muted'
-                          }`}
-                        >
-                          {day.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex justify-end">
-                  <SaveButton saving={saving} saved={saved} onClick={handleSave} />
-                </div>
-              </motion.div>
-            )}
-
-            {/* Security Section */}
-            {activeSection === 'security' && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-card border rounded-2xl p-6 space-y-6"
-              >
-                <h3 className="font-semibold text-lg">Security</h3>
-                
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between py-3 border-b">
-                    <div>
-                      <p className="font-medium">Change Password</p>
-                      <p className="text-sm text-muted-foreground">Update your account password</p>
-                    </div>
-                    <button className="px-4 py-2 bg-muted hover:bg-muted/80 rounded-xl transition-colors">
-                      Change
-                    </button>
-                  </div>
-                  <div className="flex items-center justify-between py-3 border-b">
-                    <div>
-                      <p className="font-medium">Two-Factor Authentication</p>
-                      <p className="text-sm text-muted-foreground">Add an extra layer of security</p>
-                    </div>
-                    <AnimatedToggle
-                      checked={false}
-                      onChange={() => {}}
-                    />
-                  </div>
-                  <div className="flex items-center justify-between py-3">
-                    <div>
-                      <p className="font-medium">Active Sessions</p>
-                      <p className="text-sm text-muted-foreground">Manage your logged in devices</p>
-                    </div>
-                    <button className="px-4 py-2 bg-muted hover:bg-muted/80 rounded-xl transition-colors">
-                      View
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-
-            {/* Language Section */}
-            {activeSection === 'language' && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-card border rounded-2xl p-6 space-y-6"
-              >
-                <h3 className="font-semibold text-lg">Language & Region</h3>
-                
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Display Language</label>
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    {languages.map((lang) => (
-                      <button
-                        key={lang.code}
-                        onClick={() => setLanguage(lang.code)}
-                        className={`flex items-center gap-3 p-4 rounded-xl border transition-all ${
-                          language === lang.code
-                            ? 'bg-primary/10 border-primary'
-                            : 'hover:bg-muted'
-                        }`}
-                      >
-                        <span className="text-2xl">{lang.flag}</span>
-                        <span className="font-medium">{lang.name}</span>
-                        {language === lang.code && (
-                          <motion.div
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            className="ml-auto"
-                          >
-                            <Check className="w-5 h-5 text-primary" />
-                          </motion.div>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="flex justify-end">
-                  <SaveButton saving={saving} saved={saved} onClick={handleSave} />
-                </div>
-              </motion.div>
+                  <label className="text-sm font-medium">Accent Color</label>
+                  <ColorPicker colors={accentColors} selected={appearance.accentColor} onChange={(c) => setAppearance({...appearance, accentColor: c})} />
+                 </div>
+              </div>
             )}
           </motion.div>
         </div>
       </motion.div>
     </DashboardLayout>
   );
+}
+
+function cn(...classes) {
+  return classes.filter(Boolean).join(' ');
 }

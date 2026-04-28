@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Bell, Search, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
+import { CreateHabitModal } from '@/components/habits/CreateHabitModal';
 
 const notifications = [
   { id: 1, title: 'Streak milestone!', message: 'You reached a 7-day streak on Meditation', time: '2h ago', unread: true },
@@ -14,6 +15,7 @@ const notifications = [
 
 export function DashboardHeader() {
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const unreadCount = notifications.filter(n => n.unread).length;
 
   return (
@@ -33,7 +35,11 @@ export function DashboardHeader() {
       {/* Actions */}
       <div className="flex items-center gap-3">
         {/* New Habit Button */}
-        <Button size="sm" className="hidden sm:flex gap-2">
+        <Button 
+          size="sm" 
+          className="hidden sm:flex gap-2"
+          onClick={() => setShowCreateModal(true)}
+        >
           <Plus className="w-4 h-4" />
           New Habit
         </Button>
@@ -114,6 +120,11 @@ export function DashboardHeader() {
           </AnimatePresence>
         </div>
       </div>
+      
+      <CreateHabitModal 
+        isOpen={showCreateModal} 
+        onClose={() => setShowCreateModal(false)} 
+      />
     </header>
   );
 }

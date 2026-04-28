@@ -7,29 +7,57 @@ import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { DateBar } from '@/components/logs/DateBar';
 import { LogItem } from '@/components/logs/LogItem';
 import { AutoSaveToast } from '@/components/logs/AutoSaveToast';
-
-const mockHabits = [
-  { id: 'h1', name: 'Morning Meditation', icon: '🧘', color: '#8b5cf6', type: 'boolean', streak: 12 },
-  { id: 'h2', name: 'Drink Water (2L)', icon: '💧', color: '#3b82f6', type: 'numeric', goal: 2000, unit: 'ml', streak: 45 },
-  { id: 'h3', name: 'Read 20 pages', icon: '📚', color: '#10b981', type: 'boolean', streak: 3 },
-  { id: 'h4', name: 'Gym Session', icon: '🏋️', color: '#ef4444', type: 'boolean', streak: 0 },
-  { id: 'h5', name: 'Journaling', icon: '✍️', color: '#f59e0b', type: 'boolean', streak: 8 },
-];
+import { habitsAPI, logsAPI } from '@/lib/api';
+import { useToast } from '@/components/ui/Toast';
 
 export default function LogsPage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [activeHabits, setActiveHabits] = useState([]);
   const [logs, setLogs] = useState({});
   const [showToast, setShowToast] = useState(false);
   const [hasTriggeredConfetti, setHasTriggeredConfetti] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const { success, error: toastError } = useToast();
+
+  const fetchData = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const [habitsRes, logsRes] = await Promise.all([
+        habitsAPI.getAll(),
+        logsAPI.getByDate(selectedDate.toISOString())
+      ]);
+      
+      setActiveHabits(habitsRes.data || []);
+      
+      const logsMap = {};
+      if (logsRes.data) {
+        logsRes.data.forEach(log => {
+          logsMap[log.habitId] = log;
+        });
+      }
+      setLogs(logsMap);
+      setHasTriggeredConfetti(false);
+    } catch (err) {
+      console.error('Failed to load logs', err);
+      toastError('Failed to load daily logs.');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [selectedDate, toastError]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   // Calculate progress
-  const totalHabits = mockHabits.length;
-  const completedHabits = mockHabits.filter((habit) => {
-    const log = logs[habit.id];
+  const totalHabits = activeHabits.length;
+  const completedHabits = activeHabits.filter((habit) => {
+    const log = logs[habit._id || habit.id];
     if (!log) return false;
-    return habit.type === 'boolean' ? log.value : log.value > 0;
+    return habit.type === 'boolean' ? log.value === true || log.value === 'true' : Number(log.value) > 0;
   }).length;
-  const progress = (completedHabits / totalHabits) * 100;
+  const progress = totalHabits > 0 ? (completedHabits / totalHabits) * 100 : 0;
 
   // Trigger confetti when all done
   useEffect(() => {
@@ -41,11 +69,12 @@ export default function LogsPage() {
         origin: { y: 0.7 },
         colors: ['#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ef4444'],
       });
+      success('Fantastic! All habits completed for today! 🎉');
     }
-  }, [completedHabits, totalHabits, hasTriggeredConfetti]);
+  }, [completedHabits, totalHabits, hasTriggeredConfetti, success]);
 
   // Auto-save toast
-  const handleUpdate = useCallback((habitId, data) => {
+  const handleUpdate = useCallback(async (habitId, data) => {
     setLogs((prev) => ({
       ...prev,
       [habitId]: {
@@ -55,7 +84,20 @@ export default function LogsPage() {
     }));
     setShowToast(true);
     setTimeout(() => setShowToast(false), 2000);
-  }, []);
+
+    try {
+      await logsAPI.create({
+        habitId,
+        date: selectedDate.toISOString(),
+        value: data.value,
+        note: data.note || ''
+      });
+      // success('Progress auto-saved.');
+    } catch (err) {
+      console.error('Failed to save log to backend', err);
+      toastError('Connection error: local changes not synced.');
+    }
+  }, [selectedDate, toastError]);
 
   return (
     <DashboardLayout>
@@ -97,7 +139,7 @@ export default function LogsPage() {
                 {completedHabits} of {totalHabits} habits completed
               </p>
             </div>
-            {completedHabits === totalHabits && (
+            {completedHabits === totalHabits && totalHabits > 0 && (
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
@@ -123,11 +165,15 @@ export default function LogsPage() {
 
         {/* Log List */}
         <div className="space-y-4">
-          {mockHabits.map((habit, index) => (
+          {isLoading ? (
+             <div className="py-10 text-center text-muted-foreground">Loading habits...</div>
+          ) : activeHabits.length === 0 ? (
+             <div className="py-10 text-center text-muted-foreground">No active habits found. Create one in the Habits tab!</div>
+          ) : activeHabits.map((habit, index) => (
             <LogItem
-              key={habit.id}
+              key={habit._id || habit.id}
               habit={habit}
-              log={logs[habit.id]}
+              log={logs[habit._id || habit.id]}
               onUpdate={handleUpdate}
               index={index}
             />
@@ -135,7 +181,6 @@ export default function LogsPage() {
         </div>
       </div>
 
-      {/* Auto-Save Toast */}
       <AutoSaveToast show={showToast} />
     </DashboardLayout>
   );

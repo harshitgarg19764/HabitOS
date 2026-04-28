@@ -37,11 +37,10 @@ export const generateTokenPair = async (userId) => {
   return { accessToken, refreshToken };
 };
 
-export const verifyRefreshToken = async (userId, refreshToken) => {
+export const verifyRefreshToken = async (refreshToken) => {
   const tokenHash = crypto.createHash('sha256').update(refreshToken).digest('hex');
 
   const storedToken = await RefreshToken.findOne({
-    userId,
     tokenHash,
     expiresAt: { $gt: new Date() },
   });
@@ -53,8 +52,9 @@ export const verifyRefreshToken = async (userId, refreshToken) => {
   return storedToken;
 };
 
-export const rotateTokens = async (userId, refreshToken) => {
-  await verifyRefreshToken(userId, refreshToken);
+export const rotateTokens = async (refreshToken) => {
+  const storedToken = await verifyRefreshToken(refreshToken);
+  const userId = storedToken.userId;
 
   await RefreshToken.deleteOne({
     userId,

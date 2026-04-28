@@ -4,19 +4,37 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
-export function MiniHeatmapWidget() {
+export function MiniHeatmapWidget({ data = {} }) {
   const [cells, setCells] = useState([]);
 
   useEffect(() => {
     const newCells = [];
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0);
+
+    // Calculate start date (12 weeks ago, starting from Monday)
+    const startDate = new Date(today);
+    startDate.setDate(startDate.getDate() - (12 * 7 - 1));
+    
+    let currentDate = new Date(startDate);
+    
     for (let week = 0; week < 12; week++) {
       for (let day = 0; day < 7; day++) {
-        const intensity = Math.random() > 0.3 ? Math.floor(Math.random() * 5) : 0;
-        newCells.push({ week, day, intensity });
+        const dateStr = currentDate.toISOString().split('T')[0];
+        const count = data[dateStr] || 0;
+        
+        let intensity = 0;
+        if (count > 0) intensity = 1;
+        if (count > 2) intensity = 2;
+        if (count > 4) intensity = 3;
+        if (count > 5) intensity = 4;
+        
+        newCells.push({ week, day, intensity, date: dateStr });
+        currentDate.setDate(currentDate.getDate() + 1);
       }
     }
     setCells(newCells);
-  }, []);
+  }, [data]);
 
   const getColor = (intensity) => {
     const colors = [

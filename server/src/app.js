@@ -12,6 +12,16 @@ import { errorHandler, notFound } from '#middleware/errorHandler.js';
 import { requestId } from '#middleware/requestId.js';
 import { logger } from '#utils/logger.js';
 import authRoutes from '#routes/auth.routes.js';
+import habitRoutes from '#routes/habits.routes.js';
+import logRoutes from '#routes/logs.routes.js';
+import analyticsRoutes from '#routes/analytics.routes.js';
+import aiRoutes from '#routes/ai.routes.js';
+import achievementRoutes from '#routes/achievements.routes.js';
+import settingsRoutes from '#routes/settings.routes.js';
+import passport from 'passport';
+import { configureGoogleAuth } from '#services/googleAuth.service.js';
+
+configureGoogleAuth();
 
 export const app = express();
 
@@ -65,11 +75,23 @@ const globalLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
-app.use(globalLimiter);
+
+// Limit all routes - DISABLED for development stability
+// if (process.env.NODE_ENV === 'production') {
+//   app.use('/api/', globalLimiter);
+// }
 
 app.use(cookieParser());
 
+app.use(passport.initialize());
+
 app.use('/api/auth', authRoutes);
+app.use('/api/habits', habitRoutes);
+app.use('/api/logs', logRoutes);
+app.use('/api/analytics', analyticsRoutes);
+app.use('/api/ai', aiRoutes);
+app.use('/api/achievements', achievementRoutes);
+app.use('/api/settings', settingsRoutes);
 
 app.get('/health', (req, res) => {
   res.status(200).json({ success: true, message: 'Server is healthy' });

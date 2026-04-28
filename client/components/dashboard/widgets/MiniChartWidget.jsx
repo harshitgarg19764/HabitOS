@@ -2,18 +2,18 @@
 
 import { LineChart, Line, ResponsiveContainer, YAxis } from 'recharts';
 
-const data = [
-  { day: 'Mon', score: 65 },
-  { day: 'Tue', score: 78 },
-  { day: 'Wed', score: 82 },
-  { day: 'Thu', score: 70 },
-  { day: 'Fri', score: 90 },
-  { day: 'Sat', score: 85 },
-  { day: 'Sun', score: 92 },
-];
+export function MiniChartWidget({ data = [] }) {
+  const chartData = data.length > 0 ? data.map(d => ({ ...d, score: d.completions * 20 })) : [
+    { day: 'Mon', score: 0 },
+    { day: 'Tue', score: 0 },
+    { day: 'Wed', score: 0 },
+    { day: 'Thu', score: 0 },
+    { day: 'Fri', score: 0 },
+    { day: 'Sat', score: 0 },
+    { day: 'Sun', score: 0 },
+  ];
 
-export function MiniChartWidget() {
-  const avgScore = Math.round(data.reduce((sum, d) => sum + d.score, 0) / data.length);
+  const avgScore = Math.round(chartData.reduce((sum, d) => sum + d.score, 0) / chartData.length);
 
   return (
     <div className="bg-card rounded-2xl p-6 border border-border">
@@ -24,7 +24,7 @@ export function MiniChartWidget() {
 
       <div className="h-32">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data}>
+          <LineChart data={chartData}>
             <YAxis domain={[0, 100]} hide />
             <Line
               type="monotone"
@@ -41,8 +41,8 @@ export function MiniChartWidget() {
       </div>
 
       <div className="flex justify-between mt-2">
-        {data.map((d, i) => (
-          <span key={d.day} className="text-xs text-muted-foreground">
+        {chartData.map((d, i) => (
+          <span key={i} className="text-xs text-muted-foreground">
             {d.day.charAt(0)}
           </span>
         ))}

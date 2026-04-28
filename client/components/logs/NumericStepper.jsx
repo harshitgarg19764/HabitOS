@@ -36,7 +36,7 @@ export function NumericStepper({ value, onChange, min = 0, max = 100, step = 1, 
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-4">
-        <button
+        <motion.button
           onClick={handleDecrement}
           disabled={value <= min}
           className={cn(
@@ -47,7 +47,7 @@ export function NumericStepper({ value, onChange, min = 0, max = 100, step = 1, 
           whileTap={{ scale: 0.95 }}
         >
           <Minus className="w-5 h-5" />
-        </button>
+        </motion.button>
 
         <div className="flex-1 relative h-12 overflow-hidden">
           <AnimatePresence mode="popLayout">
@@ -70,7 +70,7 @@ export function NumericStepper({ value, onChange, min = 0, max = 100, step = 1, 
           </AnimatePresence>
         </div>
 
-        <button
+        <motion.button
           onClick={handleIncrement}
           disabled={value >= max}
           className={cn(
@@ -81,7 +81,7 @@ export function NumericStepper({ value, onChange, min = 0, max = 100, step = 1, 
           whileTap={{ scale: 0.95 }}
         >
           <Plus className="w-5 h-5" />
-        </button>
+        </motion.button>
       </div>
 
       {/* Progress Bar */}

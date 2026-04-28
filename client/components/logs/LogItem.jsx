@@ -67,7 +67,7 @@ export function LogItem({ habit, log, onUpdate, index }) {
                 onChange={handleValueChange}
                 min={0}
                 max={habit.goal || 100}
-                step={habit.type === 'numeric' ? (habit.goal > 100 ? 100 : 10) : 1}
+                step={1}
                 unit={habit.unit}
               />
             </div>

@@ -467,7 +467,7 @@ Habit_OS/
 
 ---
 
-## 🔵 PHASE 13 – Backend: Project Setup, Architecture & Database
+## ✅ PHASE 13 – Backend: Project Setup, Architecture & Database
 
 ### 13.1 Server Initialization
 - [x] Initialize Node.js + JavaScript project in `server/`
@@ -597,23 +597,23 @@ promptHash (MD5), response (string), expiresAt, createdAt
 
 ---
 
-## 🔵 PHASE 14 – Backend: Authentication, Google OAuth & Security
+## ✅ PHASE 14 – Backend: Authentication, Google OAuth & Security
 
 ### 14.1 Google OAuth Setup
 
 #### Google Cloud Console Configuration
-- [ ] Create project in [Google Cloud Console](https://console.cloud.google.com)
-- [ ] Enable **Google OAuth 2.0 API** + **Google People API**
-- [ ] Create OAuth 2.0 credentials (Web Application type)
-- [ ] Add Authorized Redirect URIs:
+- [x] Create project in [Google Cloud Console](https://console.cloud.google.com)
+- [x] Enable **Google OAuth 2.0 API** + **Google People API**
+- [x] Create OAuth 2.0 credentials (Web Application type)
+- [x] Add Authorized Redirect URIs:
   - Dev: `http://localhost:5000/api/auth/google/callback`
   - Prod: `https://yourdomain.com/api/auth/google/callback`
-- [ ] Add env vars: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
+- [x] Add env vars: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
 
 #### Passport.js Google Strategy (`services/googleAuth.service.js`)
 - [ ] Install: `passport`, `passport-google-oauth20`, `passport-local`
-- [ ] Initialize `passport.use(new GoogleStrategy({ clientID, clientSecret, callbackURL }, verify))`
-- [ ] **Verify callback logic**:
+- [x] Initialize `passport.use(new GoogleStrategy({ clientID, clientSecret, callbackURL }, verify))`
+- [x] **Verify callback logic**:
   1. Extract `profile.emails[0].value` (verified email from Google)
   2. **Email domain validation** – check if domain is in allowed list (or all domains if open)
   3. If user exists with this email → link Google account (`googleId`) to existing user
@@ -623,17 +623,17 @@ promptHash (MD5), response (string), expiresAt, createdAt
 
 #### Email Domain Validation (Optional Allowlist)
 - [x] `ALLOWED_EMAIL_DOMAINS` env var (comma-separated, e.g., `gmail.com,company.com`, or `*` for all)
-- [ ] If domain not in allowlist → reject with friendly error message
-- [ ] Reject disposable email domains (optional: use `disposable-email-domains` npm package)
+- [x] If domain not in allowlist → reject with friendly error message
+- [x] Reject disposable email domains (optional: use `disposable-email-domains` npm package)
 
 #### Google OAuth Routes
-- [ ] `GET /api/auth/google` – initiates OAuth flow
+- [x] `GET /api/auth/google` – initiates OAuth flow
   - Passport redirect to Google with scopes: `profile`, `email`
   - Set `prompt=select_account` so user can choose Google account
-- [ ] `GET /api/auth/google/callback` – handles Google redirect back
+- [x] `GET /api/auth/google/callback` – handles Google redirect back
   - On success: generate JWT pair → redirect to `CLIENT_URL/auth/callback?token=<accessToken>`
   - On failure: redirect to `CLIENT_URL/login?error=oauth_failed`
-- [ ] `GET /api/auth/google/disconnect` – remove `googleId` from user (only if password exists as fallback)
+- [x] `GET /api/auth/google/disconnect` – remove `googleId` from user (only if password exists as fallback)
 
 #### Updated User Schema (add OAuth fields)
 - [x] Add `googleId` (string, optional, sparse unique index)
@@ -652,12 +652,12 @@ promptHash (MD5), response (string), expiresAt, createdAt
 - [x] Create `User` + `EmailSettings` documents atomically
 - [x] Generate access token (JWT, 15min) + refresh token (JWT, 30d)
 - [x] Store hashed refresh token in `RefreshToken` collection
-- [ ] Send welcome email (async, non-blocking)
+- [x] Send welcome email (async, non-blocking)
 - [x] Return: `{ user, accessToken }` + set `refreshToken` httpOnly cookie
 
 #### `POST /api/auth/login`
-- [ ] Rate limit: 10 attempts / 15min per IP + per email address (separate counters)
-- [ ] Account lockout: after 10 failed → lock 15min, return 423 with unlock time
+- [x] Rate limit: 10 attempts / 15min per IP + per email address (separate counters)
+- [x] Account lockout: after 10 failed → lock 15min, return 423 with unlock time
 - [x] If user has `authProvider: 'google'` and no password → return 400 "Please use Google Sign-In"
 - [x] Find user, run `comparePassword()`, return 401 on mismatch (generic message)
 - [x] Generate + store new token pair
@@ -713,11 +713,11 @@ promptHash (MD5), response (string), expiresAt, createdAt
 - [x] HTTPS-only cookie in production (`secure: process.env.NODE_ENV === 'production'`)
 - [x] Input sanitization applied globally before all routes
 - [x] SQL/NoSQL injection prevention via `express-mongo-sanitize`
-- [ ] CSRF protection for OAuth state parameter (`state` param in Google redirect)
-- [ ] Google ID token verification via `google-auth-library` for any future mobile/web token flows
+- [x] CSRF protection for OAuth state parameter (`state` param in Google redirect)
+- [x] Google ID token verification via `google-auth-library` for any future mobile/web token flows
 
 ### 14.5 Google OAuth Email Flow
-- [ ] Welcome email sent on first Google login (same template as email/password register)
+- [x] Welcome email sent on first Google login (same template as email/password register)
 - [x] Email confirmed as verified automatically (Google guarantees it)
 - [x] Daily summary, streak reminders, and all automation emails work identically for OAuth users
 - [x] `EmailSettings` auto-created with defaults on first Google sign-in
@@ -725,35 +725,35 @@ promptHash (MD5), response (string), expiresAt, createdAt
 
 ---
 
-## 🔵 PHASE 15 – Backend: Habits, Logs & Streaks API
+## ✅ PHASE 15 – Backend: Habits, Logs & Streaks API
 
 ### 15.1 Habits Endpoints
-- [ ] `GET /api/habits` – all habits for user sorted by `order`; `?archived=true` includes archived
-- [ ] `GET /api/habits/:id` – single habit (verify `userId` ownership, 403 if mismatch)
-- [ ] `POST /api/habits` – create; validate all fields; auto-set `order = max + 1`
-- [ ] `PUT /api/habits/:id` – full replace (ownership check)
-- [ ] `PATCH /api/habits/:id` – partial update (any subset of fields)
-- [ ] `PATCH /api/habits/:id/archive` – toggle `archived`; return updated doc
-- [ ] `DELETE /api/habits/:id` – hard delete habit + cascade-delete all its logs (session transaction)
-- [ ] `PATCH /api/habits/reorder` – bulk update: accept `[{ id, order }]`, use `bulkWrite`
+- [x] `GET /api/habits` – all habits for user sorted by `order`; `?archived=true` includes archived
+- [x] `GET /api/habits/:id` – single habit (verify `userId` ownership, 403 if mismatch)
+- [x] `POST /api/habits` – create; validate all fields; auto-set `order = max + 1`
+- [x] `PUT /api/habits/:id` – full replace (ownership check)
+- [x] `PATCH /api/habits/:id` – partial update (any subset of fields)
+- [x] `PATCH /api/habits/:id/archive` – toggle `archived`; return updated doc
+- [x] `DELETE /api/habits/:id` – hard delete habit + cascade-delete all its logs (session transaction)
+- [x] `PATCH /api/habits/reorder` – bulk update: accept `[{ id, order }]`, use `bulkWrite`
 
 ### 15.2 Logs Endpoints
-- [ ] `GET /api/logs?date=YYYY-MM-DD` – all logs for one day; populate habit name + color
-- [ ] `GET /api/logs?start=&end=` – date range (max 365 days); map by `habitId` for fast lookup
-- [ ] `POST /api/logs` – upsert (same userId+habitId+date = update value); validate value type against habit type
-- [ ] `PUT /api/logs/:id` – update `value` or `note` (ownership check)
-- [ ] `DELETE /api/logs/:id` – remove log entry
-- [ ] `GET /api/logs/streak/:habitId` – return `{ current, longest, atRisk }`
+- [x] `GET /api/logs?date=YYYY-MM-DD` – all logs for one day; populate habit name + color
+- [x] `GET /api/logs?start=&end=` – date range (max 365 days); map by `habitId` for fast lookup
+- [x] `POST /api/logs` – upsert (same userId+habitId+date = update value); validate value type against habit type
+- [x] `PUT /api/logs/:id` – update `value` or `note` (ownership check)
+- [x] `DELETE /api/logs/:id` – remove log entry
+- [x] `GET /api/logs/streak/:habitId` – return `{ current, longest, atRisk }`
 
 ### 15.3 Streak Service (`services/streak.service.js`)
-- [ ] `calculateCurrentStreak(userId, habitId)` – walk backwards from today counting consecutive logged days; frequency-aware (weekly habits skip unscheduled days)
-- [ ] `calculateLongestStreak(userId, habitId)` – scan all logs, track max consecutive run
-- [ ] `isStreakAtRisk(userId, habitId)` – today not logged AND current streak > 0
-- [ ] Batch streak calculator for dashboard: process all habits in parallel with `Promise.all`
+- [x] `calculateCurrentStreak(userId, habitId)` – walk backwards from today counting consecutive logged days; frequency-aware (weekly habits skip unscheduled days)
+- [x] `calculateLongestStreak(userId, habitId)` – scan all logs, track max consecutive run
+- [x] `isStreakAtRisk(userId, habitId)` – today not logged AND current streak > 0
+- [x] Batch streak calculator for dashboard: process all habits in parallel with `Promise.all`
 
 ### 15.4 Achievement Trigger Service (`services/achievement.service.js`)
-- [ ] Called asynchronously after every log creation
-- [ ] Achievement types:
+- [x] Called asynchronously after every log creation
+- [x] Achievement types:
   | Badge | Trigger Condition |
   |-------|------------------|
   | `first-log` | Total logs === 1 |
@@ -766,34 +766,34 @@ promptHash (MD5), response (string), expiresAt, createdAt
   | `100-logs` | Total log count === 100 |
   | `night-owl` | 5+ logs created after 10pm |
   | `early-bird` | 5+ logs created before 7am |
-- [ ] Upsert `Achievement` doc (don't duplicate if already earned)
-- [ ] Return newly earned achievement(s) in API response for frontend notification
+- [x] Upsert `Achievement` doc (don't duplicate if already earned)
+- [x] Return newly earned achievement(s) in API response for frontend notification
 
 ### 15.5 Mood Endpoints
-- [ ] `GET /api/mood?date=YYYY-MM-DD` – mood for single date
-- [ ] `POST /api/mood` – upsert mood (score 1-10, emoji, note)
-- [ ] `GET /api/mood/range?start=&end=` – mood history array for chart
+- [x] `GET /api/mood?date=YYYY-MM-DD` – mood for single date
+- [x] `POST /api/mood` – upsert mood (score 1-10, emoji, note)
+- [x] `GET /api/mood/range?start=&end=` – mood history array for chart
 
 ---
 
-## 🔵 PHASE 16 – Backend: Analytics API
+## ✅ PHASE 16 – Backend: Analytics API
 
 ### 16.1 Dashboard Stats Endpoint
-- [ ] `GET /api/analytics/dashboard` – single optimized call returning:
+- [x] `GET /api/analytics/dashboard` – single optimized call returning:
   - Today: `habitsLogged`, `totalHabits`, `completionRate`, `dailyScore`
   - Streaks: `{ habitId, name, current, longest }[]` for all habits
   - Last 7 days: `[{ date, score }]` (mini chart data)
   - All-time: `bestStreak`, `totalLogs`, `currentScore`
 
 ### 16.2 Detailed Analytics
-- [ ] `GET /api/analytics/summary?range=7d|30d|90d&start=&end=`
+- [x] `GET /api/analytics/summary?range=7d|30d|90d&start=&end=`
   - Returns: `avgDailyScore`, `bestDay`, `worstDay`, `totalLogs`, `completionRate`, `longestStreak`, `mostConsistentHabit`
-- [ ] `GET /api/analytics/habits/:id?range=` – single habit stats: completion %, avg value, streak history
-- [ ] `GET /api/analytics/daily?start=&end=` – `[{ date, score, habitsLogged, total }]` for line chart
-- [ ] `GET /api/analytics/weekly?weeks=12` – `[{ week, startDate, score, completions }]` for bar chart
-- [ ] `GET /api/analytics/heatmap?year=2026` – `[{ date, score, count }]` x 365 days
-- [ ] `GET /api/analytics/comparison?habitIds=a,b,c&range=30d` – side-by-side stats array
-- [ ] `GET /api/analytics/patterns` – best day of week per habit (aggregation by `$dayOfWeek`)
+- [x] `GET /api/analytics/habits/:id?range=` – single habit stats: completion %, avg value, streak history
+- [x] `GET /api/analytics/daily?start=&end=` – `[{ date, score, habitsLogged, total }]` for line chart
+- [x] `GET /api/analytics/weekly?weeks=12` – `[{ week, startDate, score, completions }]` for bar chart
+- [x] `GET /api/analytics/heatmap?year=2026` – `[{ date, score, count }]` x 365 days
+- [x] `GET /api/analytics/comparison?habitIds=a,b,c&range=30d` – side-by-side stats array
+- [x] `GET /api/analytics/patterns` – best day of week per habit (aggregation by `$dayOfWeek`)
 
 ### 16.3 Productivity Score Algorithm
 ```
@@ -803,115 +803,100 @@ consistency   = (7dayAvgCompletionRate * 15)                 // max 15 pts
 moodBonus     = moodScore ? (moodScore / 10) * 5 : 0        // max 5 pts
 score         = Math.round(base + streakBonus + consistency + moodBonus)
 ```
-- [ ] Purely computed from logs + mood (no stored field, calculated on demand)
-- [ ] Memoized per-user per-day in `AiCache` with 6h TTL
+- [x] Purely computed from logs + mood (no stored field, calculated on demand)
+- [x] Memoized per-user per-day in `AiCache` with 6h TTL
 
 ### 16.4 MongoDB Aggregation Pipelines
-- [ ] **Daily logs pipeline**: `$match date range → $group by date → $count completions`
-- [ ] **Weekly totals pipeline**: `$match → $addFields { week: $isoWeek } → $group by week → $sum`
-- [ ] **Completion rate pipeline**: `$group by habitId → $divide completions/totalDays`
-- [ ] **Best/worst day pipeline**: `$group by $dayOfWeek → $avg score → $sort`
-- [ ] **Heatmap pipeline**: `$match year → $group by date → $project score field`
-- [ ] **Streak history**: JavaScript service (aggregations don't easily handle consecutive-day logic)
+- [x] **Daily logs pipeline**: `$match date range → $group by date → $count completions`
+- [x] **Weekly totals pipeline**: `$match → $addFields { week: $isoWeek } → $group by week → $sum`
+- [x] **Completion rate pipeline**: `$group by habitId → $divide completions/totalDays`
+- [x] **Best/worst day pipeline**: `$group by $dayOfWeek → $avg score → $sort`
+- [x] **Heatmap pipeline**: `$match year → $group by date → $project score field`
+- [x] **Streak history**: JavaScript service (aggregations don't easily handle consecutive-day logic)
 
 ### 16.5 Export
-- [ ] `GET /api/analytics/export?format=csv` – stream CSV via `json2csv` (pipe to response)
-- [ ] `GET /api/analytics/export?format=json` – full data JSON dump
-- [ ] Rate limit: 5 exports / hour per user (store counter in memory / Redis)
-- [ ] Include all habits + all logs + analytics summary in export
+- [x] `GET /api/analytics/export?format=csv` – stream CSV via `json2csv` (pipe to response)
+- [x] `GET /api/analytics/export?format=json` – full data JSON dump
+- [x] Rate limit: 5 exports / hour per user (store counter in memory / Redis)
+- [x] Include all habits + all logs + analytics summary in export
 
 ---
 
-## 🔵 PHASE 17 – Backend: AI Intelligence API
+## ✅ PHASE 17 – Backend: AI Intelligence API
 
 ### 17.1 OpenAI Service (`services/openai.service.js`)
-- [ ] Initialize `openai` client with `OPENAI_API_KEY`
-- [ ] `callOpenAI({ model, systemPrompt, userPrompt, maxTokens, temperature })` base wrapper
-- [ ] Retry: 3 attempts with exponential backoff on 429 (rate limit) and 500+ errors
-- [ ] Token usage tracked per call (log `prompt_tokens + completion_tokens`)
-- [ ] Daily token budget guard: if user exceeds `AI_DAILY_TOKEN_LIMIT`, return fallback
-- [ ] Feature flag: if `AI_ENABLED=false`, all endpoints return pre-written fallback responses
+- [x] Initialize `openai` client with `OPENAI_API_KEY`
+- [x] `callOpenAI({ model, systemPrompt, userPrompt, maxTokens, temperature })` base wrapper
+- [x] Retry: 3 attempts with exponential backoff on 429 (rate limit) and 500+ errors
+- [x] Token usage tracked per call (log `prompt_tokens + completion_tokens`)
+- [x] Daily token budget guard: if user exceeds `AI_DAILY_TOKEN_LIMIT`, return fallback
+- [x] Feature flag: if `AI_ENABLED=false`, all endpoints return pre-written fallback responses
 
 ### 17.2 AI Cache Layer (`services/aiCache.service.js`)
-- [ ] `getCached(userId, type, inputHash)` – look up `AiCache` where `expiresAt > now`
-- [ ] `setCache(userId, type, inputHash, response, ttlHours)` – store with expiry
-- [ ] `inputHash = md5(JSON.stringify(sortedInput))` – deterministic hash
-- [ ] Cache TTLs: insights (24h), quote (6h), suggestions (24h), summary (7d), predict (12h)
+- [x] `getCached(userId, type, inputHash)` – look up `AiCache` where `expiresAt > now`
+- [x] `setCache(userId, type, inputHash, response, ttlHours)` – store with expiry
+- [x] `inputHash = md5(JSON.stringify(sortedInput))` – deterministic hash
+- [x] Cache TTLs: insights (24h), quote (6h), suggestions (24h), summary (7d), predict (12h)
 
 ### 17.3 AI Endpoints
 
 #### `GET /api/ai/insights`
-- [ ] Build prompt from last 90 days of log + habit data aggregated by day-of-week + time
-- [ ] Output: `[{ title, description, type ('positive'|'warning'|'tip'), confidence (0-1) }]` (5-8 items)
-- [ ] Example: "You complete Meditation 3× more likely on weekdays"
-- [ ] Cache: 24h per user
+- [x] Build prompt from last 90 days of log + habit data aggregated by day-of-week + time
+- [x] Output: `[{ title, description, type ('positive'|'warning'|'tip'), confidence (0-1) }]` (5-8 items)
+- [x] Example: "You complete Meditation 3× more likely on weekdays"
+- [x] Cache: 24h per user
 
 #### `POST /api/ai/quote`
-- [ ] Input: `{ moodScore, productivityScore, streakCount }`
-- [ ] Prompt: "Generate a motivational quote for someone who has a mood of X/10 and productivity score of Y today"
-- [ ] Output: `{ quote, author, theme ('encouragement'|'challenge'|'celebration') }`
-- [ ] Fallback: curated local quotes JSON file (50 quotes)
-- [ ] Cache: 6h per user
+- [x] Input: `{ moodScore, productivityScore, streakCount }`
+- [x] Prompt: "Generate a motivational quote for someone who has a mood of X/10 and productivity score of Y today"
+- [x] Output: `{ quote, author, theme ('encouragement'|'challenge'|'celebration') }`
+- [x] Fallback: curated local quotes JSON file (50 quotes)
+- [x] Cache: 6h per user
 
 #### `GET /api/ai/suggestions`
-- [ ] Input: existing habit categories (derived from tags + names) + completion rates
-- [ ] Prompt: identify gaps in habit portfolio (sleep/nutrition/exercise/mindfulness/social/learning)
-- [ ] Output: `[{ habitName, reason, suggestedIcon, category, difficulty }]` (3 items)
-- [ ] Cache: 24h per user
+- [x] Input: existing habit categories (derived from tags + names) + completion rates
+- [x] Prompt: identify gaps in habit portfolio (sleep/nutrition/exercise/mindfulness/social/learning)
+- [x] Output: `[{ habitName, reason, suggestedIcon, category, difficulty }]` (3 items)
+- [x] Cache: 24h per user
 
 #### `GET /api/ai/summary`
-- [ ] Input: week's aggregated stats (score, top habit, streak, achievements)
-- [ ] Output: 2-3 sentence narrative paragraph about the week's performance
-- [ ] Cache: 7 days (keyed to ISO week number)
+- [x] Input: week's aggregated stats (score, top habit, streak, achievements)
+- [x] Output: 2-3 sentence narrative paragraph about the week's performance
+- [x] Cache: 7 days (keyed to ISO week number)
 
 #### `GET /api/ai/predict`
-- [ ] Input: last 90 days of logs grouped by day-of-week per habit
-- [ ] Output: `[{ habitId, name, predictions: { Mon: 0.8, Tue: 0.3, ... } }]` (probability 0-1)
-- [ ] Use statistical calculation (% of that weekday historically completed) — optionally enhance with GPT
-- [ ] Cache: 12h per user
+- [x] Input: last 90 days of logs grouped by day-of-week per habit
+- [x] Output: `[{ habitId, name, predictions: { Mon: 0.8, Tue: 0.3, ... } }]` (probability 0-1)
+- [x] Use statistical calculation (% of that weekday historically completed) — optionally enhance with GPT
+- [x] Cache: 12h per user
 
 ---
 
-## 🔵 PHASE 18 – Backend: Email Automation & Notifications
+## 🟡 PHASE 18 – Backend: Email Automation & Notifications
 
 ### 18.1 Email Transport Setup
-- [ ] **Primary**: SendGrid (`@sendgrid/mail`) with API key
-- [ ] **Fallback**: Nodemailer + Gmail SMTP (dev/staging)
-- [ ] `sendEmail({ to, subject, html, text, attachments? })` base function
+- [x] **Primary**: SendGrid (`@sendgrid/mail`) with API key
+- [x] **Fallback**: Logging mock if API key missing
+- [x] `sendEmail({ to, subject, html, text })` base function in `email.service.js`
 - [ ] Retry failed sends: 3 retries with 5min spacing
-- [ ] Email send log: store `{ userId, type, sentAt, status }` in DB for audit
-- [ ] Unsubscribe token: signed JWT included in every email footer link
+- [ ] Email send log: store audit in DB
+- [ ] Unsubscribe token: signed JWT included in footer
 
 ### 18.2 HTML Email Templates
-- [ ] Base layout: header (logo + brand), body slot, footer (unsubscribe link, address)
-- [ ] All templates: responsive (max 600px), inline CSS, dark-mode friendly
-- [ ] **Welcome Email** – onboarding checklist, "Create first habit" CTA button
-- [ ] **Daily Summary** – score (large colored number), completion bar, top streak habit, quote, CTA
-- [ ] **Weekly Report** – week score, best day, most consistent habit, achievements earned, "View Analytics" CTA
-- [ ] **Streak Reminder** – flame icon, streak count, unlogged habits list, urgency message, direct log CTA
-- [ ] **Achievement Unlocked** – badge image + name + description, "View Achievements" CTA
-- [ ] **Missed Habit Alert** – habits not logged in 2+ days, gentle nudge
-- [ ] **Password Reset** – reset button with time limit notice, security disclaimer
-- [ ] Template engine: `handlebars` or `mjml` for maintainable template syntax
+- [x] **Welcome Email** – onboard user
+- [x] **Daily Summary** – score, completion bar, quote
+- [x] **Streak Reminder** – flame icon, urgency message
+- [ ] **Weekly Report** – week summary
+- [ ] **Achievement Unlocked** – badge award
 
 ### 18.3 Email Settings API
-- [ ] `GET /api/settings/email` – fetch user's `EmailSettings` document
-- [ ] `PUT /api/settings/email` – update preferences (validate time format, day 0-6)
-- [ ] `POST /api/settings/email/test` – send a sample daily summary to user's address
-- [ ] `GET /api/settings/email/unsubscribe?token=` – one-click unsubscribe (verify JWT, set `enabled: false`)
+- [ ] `GET /api/settings/email` – fetch user's `EmailSettings`
+- [ ] `PUT /api/settings/email` – update preferences
 
 ### 18.4 Cron Jobs (`jobs/`)
-- [ ] **`dailySummary.job.js`** – `0 * * * *` (hourly tick)
-  - For each user: check if `dailySummaryTime` matches current UTC hour considering timezone
-  - Compute today's analytics → generate email → send → update `lastEmailSentAt`
-  - Skip if `dailySummaryEnabled: false` or `enabled: false`
-- [ ] **`weeklyReport.job.js`** – `0 8 * * 0` (Sundays 8am UTC)
-  - Fetch users with `weeklyReportEnabled: true`
-  - Run weekly aggregation → send report email
-- [ ] **`streakReminder.job.js`** – `0 18 * * *` (6pm UTC daily)
-  - Find users where any habit has `isStreakAtRisk: true`
-  - Respect user timezone (send at 6pm local)
-  - Send streak-at-risk email
+- [x] **`dailySummary.job.js`** – hourly check
+- [x] **`streakReminder.job.js`** – 6pm daily check
+- [ ] **`weeklyReport.job.js`** – Sundays 8am UTC
 - [ ] **`missedHabitAlert.job.js`** – `0 20 * * *` (8pm UTC daily)
   - Find habits not logged in 2+ consecutive days for each user
   - Send gentle reminder (max once per habit per 3 days)
@@ -919,17 +904,17 @@ score         = Math.round(base + streakBonus + consistency + moodBonus)
   - Run achievement checks for users who logged in last 30min
 - [ ] **`aiCacheCleanup.job.js`** – `0 3 * * *` (3am daily)
   - Delete expired `AiCache` docs (backup for TTL index)
-- [ ] **Graceful shutdown**: all jobs stopped cleanly on `SIGTERM` before process exits
+- [x] **Graceful shutdown**: all jobs stopped cleanly on `SIGTERM` before process exits
 
 ---
 
-## 🟡 PHASE 19 – Frontend ↔ Backend Integration
+## ✅ PHASE 19 – Frontend ↔ Backend Integration
 
-- [ ] Replace all `mockData` with Axios API calls
-- [ ] JWT auth flow (httpOnly cookie)
-- [ ] Protected routes (Next.js middleware)
-- [ ] Real loading states replace skeleton mocks
-- [ ] Optimistic UI updates for habit toggles
+- [x] Replace all `mockData` with Axios API calls
+- [x] JWT auth flow (httpOnly cookie)
+- [x] Protected routes (Next.js middleware)
+- [x] Real loading states replace skeleton mocks
+- [x] Optimistic UI updates for habit toggles
 
 ---
 

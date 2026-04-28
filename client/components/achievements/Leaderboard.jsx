@@ -35,7 +35,9 @@ function useCountUp(end, duration = 1000) {
 }
 
 function RankNumber({ rank, isUser }) {
-  const count = useCountUp(rank, 800);
+  // Defensive check: If rank is not a number (like '?'), don't try to animate it
+  const isNumeric = typeof rank === 'number';
+  const count = useCountUp(isNumeric ? rank : 0, 800);
 
   const getRankStyle = (r) => {
     if (r === 1) return { bg: 'bg-yellow-400', text: 'text-yellow-900', icon: '🥇' };
@@ -44,11 +46,11 @@ function RankNumber({ rank, isUser }) {
     return { bg: 'bg-muted', text: 'text-muted-foreground', icon: null };
   };
 
-  const style = getRankStyle(rank);
+  const style = getRankStyle(isNumeric ? rank : 999);
 
   return (
     <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${style.bg} ${style.text}`}>
-      {style.icon || count}
+      {style.icon || (isNumeric ? count : rank)}
     </div>
   );
 }

@@ -16,6 +16,10 @@ import '#config/env.js';
 import { app } from './app.js';
 import connectDB from '#config/db.js';
 import { logger } from '#utils/logger.js';
+import { initDailySummaryJob } from './jobs/dailySummary.job.js';
+import { initStreakReminderJob } from './jobs/streakReminder.job.js';
+import { initWeeklyReportJob } from './jobs/weeklyReport.job.js';
+import { initAiCacheCleanupJob } from './jobs/aiCacheCleanup.job.js';
 
 const PORT = process.env.PORT || 5000;
 
@@ -26,6 +30,13 @@ const startServer = async () => {
     app.listen(PORT, () => {
       logger.info(`🚀 Server running on port ${PORT}`);
       logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
+      
+      // Initialize Cron Jobs
+      initDailySummaryJob();
+      initStreakReminderJob();
+      initWeeklyReportJob();
+      initAiCacheCleanupJob();
+      logger.info('⏰ Cron jobs initialized');
     });
   } catch (error) {
     logger.error('Failed to start server:', error);

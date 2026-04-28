@@ -77,9 +77,9 @@ export function CreateHabitModal({ isOpen, onClose, onSubmit, editHabit }) {
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ type: 'spring', duration: 0.4 }}
           onClick={(e) => e.stopPropagation()}
-          className="w-full max-w-lg"
+          className="w-full max-w-lg my-auto"
         >
-          <Card className="overflow-hidden">
+          <Card className="overflow-hidden max-h-[90vh] flex flex-col">
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b border-border">
               <div>
@@ -107,7 +107,7 @@ export function CreateHabitModal({ isOpen, onClose, onSubmit, editHabit }) {
               />
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6">
+            <form onSubmit={handleSubmit} className="p-6 overflow-y-auto flex-1">
               <AnimatePresence mode="wait">
                 {step === 1 ? (
                   <motion.div
@@ -184,7 +184,7 @@ export function CreateHabitModal({ isOpen, onClose, onSubmit, editHabit }) {
                       </div>
                     </div>
 
-                    <Button type="submit" className="w-full">
+                    <Button type="button" onClick={() => setStep(2)} className="w-full">
                       Continue
                     </Button>
                   </motion.div>

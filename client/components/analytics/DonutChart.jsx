@@ -9,17 +9,13 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
-const data = [
-  { name: 'Meditation', value: 25, color: '#8b5cf6' },
-  { name: 'Water', value: 20, color: '#3b82f6' },
-  { name: 'Reading', value: 18, color: '#10b981' },
-  { name: 'Gym', value: 22, color: '#ef4444' },
-  { name: 'Journal', value: 15, color: '#f59e0b' },
-];
+export function DonutChart({ data = [] }) {
+  const chartData = data.length > 0 ? data : [
+    { name: 'No Data', value: 100, color: '#e5e7eb' },
+  ];
 
-const COLORS = data.map(d => d.color);
+  const COLORS = chartData.map(d => d.color || '#6366f1');
 
-export function DonutChart() {
   return (
     <div className="flex items-center gap-6">
       <motion.div
@@ -31,7 +27,7 @@ export function DonutChart() {
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
-              data={data}
+              data={chartData}
               cx="50%"
               cy="50%"
               innerRadius={55}
@@ -41,7 +37,7 @@ export function DonutChart() {
               animationDuration={1500}
               animationBegin={0}
             >
-              {data.map((entry, index) => (
+              {chartData.map((entry, index) => (
                 <Cell
                   key={`cell-${index}`}
                   fill={COLORS[index % COLORS.length]}
@@ -61,7 +57,7 @@ export function DonutChart() {
       </motion.div>
 
       <div className="flex flex-col gap-2">
-        {data.map((item, index) => (
+        {chartData.map((item, index) => (
           <motion.div
             key={item.name}
             initial={{ opacity: 0, x: -10 }}
@@ -71,7 +67,7 @@ export function DonutChart() {
           >
             <div
               className="w-3 h-3 rounded-full"
-              style={{ backgroundColor: item.color }}
+              style={{ backgroundColor: item.color || '#6366f1' }}
             />
             <span className="text-sm text-muted-foreground">{item.name}</span>
             <span className="text-sm font-medium ml-auto">{item.value}%</span>

@@ -12,7 +12,8 @@ Your reading habit has improved significantly, with an average of 25 pages per d
 Key wins: 14-day meditation streak, 92% water intake, improved sleep quality.
 Focus areas: Weekend consistency, earlier bedtime.`;
 
-export function WeeklyNarrative({ expanded, onToggle }) {
+export function WeeklyNarrative({ text, expanded, onToggle }) {
+  const narrativeText = text || `This week showed strong consistency with your morning routine...`;
   return (
     <motion.div
       className="bg-card rounded-2xl border overflow-hidden"
@@ -56,7 +57,7 @@ export function WeeklyNarrative({ expanded, onToggle }) {
             transition={{ duration: 0.3, delay: 0.1 }}
             className="text-muted-foreground leading-relaxed whitespace-pre-line"
           >
-            {narrative}
+            {narrativeText}
           </motion.p>
         </div>
       </motion.div>
